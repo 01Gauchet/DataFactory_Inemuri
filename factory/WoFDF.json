@@ -1,0 +1,9 @@
+{
+	"name": "WoFDF",
+	"location": "southafricanorth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2f90cbd7-68e7-4980-b230-c95619265fa7",
+		"tenantId": "022d6f71-f165-400e-8a60-7135fb02aced"
+	}
+}
