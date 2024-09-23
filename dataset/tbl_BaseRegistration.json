@@ -5,6 +5,9 @@
 			"referenceName": "WOF_DataWareHouse",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Target"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
