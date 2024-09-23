@@ -1,0 +1,37 @@
+{
+	"name": "tbl_BaseRegistration",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "WOF_DataWareHouse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Province",
+				"type": "nvarchar"
+			},
+			{
+				"name": "District_Municipality",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Local_Municipality",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Project_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Project_Registration_Number",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "raw",
+			"table": "tb_BaseRegistration"
+		}
+	}
+}
