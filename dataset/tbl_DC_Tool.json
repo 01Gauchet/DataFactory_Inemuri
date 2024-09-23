@@ -1,0 +1,174 @@
+{
+	"name": "tbl_DC_Tool",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "WOF_DataWareHouse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Number",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "Province",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Employee_Nr",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Local_Municipality",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Locality_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NAMES",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SURNAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ID_Number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Job_Description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Daily_Wage_rate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COUNTRY_OF_ORIGIN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATE_OF_BIRTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GENDER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RACE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISABILITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Government_Grant",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Start_Date",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Date_Exited_project",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Employed_in_past_5_years",
+				"type": "nvarchar"
+			},
+			{
+				"name": "First_language_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Other_language_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Other_language_3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "School_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Highest_level_of_education",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Year_Completed",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Province2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Metro_District_Municipality",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Local_Municipality2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Subplace_local_town_Village_Suburb",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Ward_name_number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Address",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cellphone_number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Email_address",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Number_of_people_in_household",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Number_of_dependents_in_household",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Number_of_children_attending_school",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Certified_ID_copy_submitted",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "raw",
+			"table": "tb_DC_Tool"
+		}
+	}
+}
