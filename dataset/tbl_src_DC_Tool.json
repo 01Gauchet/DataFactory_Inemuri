@@ -1,12 +1,12 @@
 {
-	"name": "tbl_DC_Tool",
+	"name": "tbl_src_DC_Tool",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "WOF_DataWareHouse",
+			"referenceName": "WOF Linked Service",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "02 Target"
+			"name": "01 Source"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
@@ -167,11 +167,19 @@
 			{
 				"name": "Certified_ID_copy_submitted",
 				"type": "nvarchar"
+			},
+			{
+				"name": "column40",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column41",
+				"type": "nvarchar"
 			}
 		],
 		"typeProperties": {
-			"schema": "raw",
-			"table": "tb_DC_Tool"
+			"schema": "hcm",
+			"table": "DC Tool_20240917"
 		}
 	}
 }

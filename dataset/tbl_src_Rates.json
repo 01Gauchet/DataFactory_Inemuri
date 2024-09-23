@@ -1,0 +1,117 @@
+{
+	"name": "tbl_src_Rates",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "WOF Linked Service",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "01 Source"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Job_Title",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column2",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "Rate_per_hour",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column6",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column7",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column8",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column9",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column10",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column11",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column12",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column13",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column14",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column15",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column16",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column17",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column18",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column19",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column20",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column21",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column22",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column23",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column24",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "hcm",
+			"table": "rates_20240923"
+		}
+	}
+}
