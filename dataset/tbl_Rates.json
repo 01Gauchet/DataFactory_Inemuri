@@ -1,0 +1,30 @@
+{
+	"name": "tbl_Rates",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "WOF_DataWareHouse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Job_Title",
+				"type": "nvarchar"
+			},
+			{
+				"name": "column2",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "Rate_per_hour",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "raw",
+			"table": "tb_rates"
+		}
+	}
+}
