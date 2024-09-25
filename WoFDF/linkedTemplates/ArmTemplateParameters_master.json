@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "WoFDF"
+		},
+		"WOF Linked Service_password": {
+			"value": ""
+		},
+		"WOF_DataWareHouse_password": {
+			"value": ""
+		},
+		"WOF Linked Service_properties_typeProperties_server": {
+			"value": "inemuri.database.windows.net"
+		},
+		"WOF Linked Service_properties_typeProperties_database": {
+			"value": "WOF"
+		},
+		"WOF Linked Service_properties_typeProperties_userName": {
+			"value": "Inumeri_ETL"
+		},
+		"WOF_DataWareHouse_properties_typeProperties_server": {
+			"value": "inemuri.database.windows.net"
+		},
+		"WOF_DataWareHouse_properties_typeProperties_database": {
+			"value": "WOF-Warehouse"
+		},
+		"WOF_DataWareHouse_properties_typeProperties_userName": {
+			"value": "Inumeri_ETL"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

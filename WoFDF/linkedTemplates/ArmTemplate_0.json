@@ -1,0 +1,1601 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "WoFDF"
+		},
+		"WOF Linked Service_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'WOF Linked Service'"
+		},
+		"WOF_DataWareHouse_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'WOF_DataWareHouse'"
+		},
+		"WOF Linked Service_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "inemuri.database.windows.net"
+		},
+		"WOF Linked Service_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "WOF"
+		},
+		"WOF Linked Service_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Inumeri_ETL"
+		},
+		"WOF_DataWareHouse_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "inemuri.database.windows.net"
+		},
+		"WOF_DataWareHouse_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "WOF-Warehouse"
+		},
+		"WOF_DataWareHouse_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Inumeri_ETL"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+			"apiVersion": "2018-06-01",
+			"properties": {},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WOF Linked Service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('WOF Linked Service_properties_typeProperties_server')]",
+					"database": "[parameters('WOF Linked Service_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('WOF Linked Service_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('WOF Linked Service_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WOF_DataWareHouse')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('WOF_DataWareHouse_properties_typeProperties_server')]",
+					"database": "[parameters('WOF_DataWareHouse_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('WOF_DataWareHouse_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('WOF_DataWareHouse_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_delta_BaseRegistration')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "sp_BaseRegistration",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_DIM_BaseRegistration]"
+						},
+						"linkedServiceName": {
+							"referenceName": "WOF_DataWareHouse",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF_DataWareHouse')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tbl_BaseRegistration')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "WOF_DataWareHouse",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "02 Target"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Province",
+						"type": "nvarchar"
+					},
+					{
+						"name": "District_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Local_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Project_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Project_Registration_Number",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "raw",
+					"table": "tb_BaseRegistration"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF_DataWareHouse')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tbl_DC_Tool')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "WOF_DataWareHouse",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "02 Target"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Number",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Province",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Employee_Nr",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Local_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Locality_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NAMES",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EL",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SURNAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ID_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Job_Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Daily_Wage_rate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "COUNTRY_OF_ORIGIN",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DATE_OF_BIRTH",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GENDER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AGE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "RACE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DISABILITY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Government_Grant",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Start_Date",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Date_Exited_project",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Employed_in_past_5_years",
+						"type": "nvarchar"
+					},
+					{
+						"name": "First_language_2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Other_language_2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Other_language_3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "School_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Highest_level_of_education",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Year_Completed",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Province2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Metro_District_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Local_Municipality2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Subplace_local_town_Village_Suburb",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Ward_name_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Address",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cellphone_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Email_address",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Number_of_people_in_household",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Number_of_dependents_in_household",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Number_of_children_attending_school",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Certified_ID_copy_submitted",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "raw",
+					"table": "tb_DC_Tool"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF_DataWareHouse')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tbl_Rates')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "WOF_DataWareHouse",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "02 Target"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Job_Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column2",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Rate_per_hour",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "raw",
+					"table": "tb_rates"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF_DataWareHouse')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tbl_src_BaseRegistration')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "WOF Linked Service",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "01 Source"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Province",
+						"type": "nvarchar"
+					},
+					{
+						"name": "District_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "del",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Local_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column5",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Project_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column7",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Project_Registration_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column9",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column10",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column11",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column12",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column13",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column14",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column15",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column16",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column17",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column18",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column19",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "hcm",
+					"table": "baseregistration_20240923"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF Linked Service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tbl_src_DC_Tool')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "WOF Linked Service",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "01 Source"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Number",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Province",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Employee_Nr",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Local_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Locality_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NAMES",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EL",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SURNAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ID_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Job_Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Daily_Wage_rate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "COUNTRY_OF_ORIGIN",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DATE_OF_BIRTH",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GENDER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AGE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "RACE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DISABILITY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Government_Grant",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Start_Date",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Date_Exited_project",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Employed_in_past_5_years",
+						"type": "nvarchar"
+					},
+					{
+						"name": "First_language_2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Other_language_2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Other_language_3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "School_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Highest_level_of_education",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Year_Completed",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Province2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Metro_District_Municipality",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Local_Municipality2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Subplace_local_town_Village_Suburb",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Ward_name_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Address",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cellphone_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Email_address",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Number_of_people_in_household",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Number_of_dependents_in_household",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Number_of_children_attending_school",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Certified_ID_copy_submitted",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column40",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column41",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "hcm",
+					"table": "DC Tool_20240917"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF Linked Service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tbl_src_Rates')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "WOF Linked Service",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "01 Source"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Job_Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column2",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Rate_per_hour",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column4",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column5",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column6",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column7",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column8",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column9",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column10",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column11",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column12",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column13",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column14",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column15",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column16",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column17",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column18",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column19",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column20",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column21",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column22",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column23",
+						"type": "nvarchar"
+					},
+					{
+						"name": "column24",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "hcm",
+					"table": "rates_20240923"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF Linked Service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_initialPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "cpy_DC_Tool",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Number",
+											"type": "Int16",
+											"physicalType": "smallint"
+										},
+										"sink": {
+											"name": "Number",
+											"type": "Int16",
+											"physicalType": "smallint"
+										}
+									},
+									{
+										"source": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Employee_Nr",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Employee_Nr",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Locality_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Locality_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "NAMES",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "NAMES",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EL",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "EL",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "SURNAME",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "SURNAME",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ID_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "ID_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Job_Description",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Job_Description",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Daily_Wage_rate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Daily_Wage_rate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "COUNTRY_OF_ORIGIN",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "COUNTRY_OF_ORIGIN",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "DATE_OF_BIRTH",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "DATE_OF_BIRTH",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "GENDER",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "GENDER",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "AGE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "AGE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "RACE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "RACE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "DISABILITY",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "DISABILITY",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Government_Grant",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Government_Grant",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Start_Date",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Start_Date",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Date_Exited_project",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Date_Exited_project",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Employed_in_past_5_years",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Employed_in_past_5_years",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "First_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "First_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Other_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Other_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Other_language_3",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Other_language_3",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "School_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "School_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Highest_level_of_education",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Highest_level_of_education",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Year_Completed",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Year_Completed",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Province2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Province2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Metro_District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Metro_District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Local_Municipality2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Local_Municipality2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Subplace_local_town_Village_Suburb",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Subplace_local_town_Village_Suburb",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Ward_name_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Ward_name_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Cellphone_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Cellphone_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Email_address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Email_address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Number_of_people_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Number_of_people_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Number_of_dependents_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Number_of_dependents_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Number_of_children_attending_school",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Number_of_children_attending_school",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Certified_ID_copy_submitted",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Certified_ID_copy_submitted",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tbl_src_DC_Tool",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tbl_DC_Tool",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cpy_BaseRegistration",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "cpy_DC_Tool",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Project_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Project_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Project_Registration_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Project_Registration_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tbl_src_BaseRegistration",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tbl_BaseRegistration",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cpy_Rates",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "cpy_BaseRegistration",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Job_Title",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Job_Title",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "column2",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "column2",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										}
+									},
+									{
+										"source": {
+											"name": "Rate_per_hour",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Rate_per_hour",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tbl_src_Rates",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tbl_Rates",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/tbl_src_DC_Tool')]",
+				"[concat(variables('factoryId'), '/datasets/tbl_DC_Tool')]",
+				"[concat(variables('factoryId'), '/datasets/tbl_src_BaseRegistration')]",
+				"[concat(variables('factoryId'), '/datasets/tbl_BaseRegistration')]",
+				"[concat(variables('factoryId'), '/datasets/tbl_src_Rates')]",
+				"[concat(variables('factoryId'), '/datasets/tbl_Rates')]"
+			]
+		}
+	]
+}
