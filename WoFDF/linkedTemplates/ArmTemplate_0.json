@@ -157,6 +157,33 @@
 							"referenceName": "WOF_DataWareHouse",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "sp_DIM_ParticipantDetails",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "sp_BaseRegistration",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_DIM_ParticipantBasicDetails]"
+						},
+						"linkedServiceName": {
+							"referenceName": "WOF_DataWareHouse",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"policy": {
