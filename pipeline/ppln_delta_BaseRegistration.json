@@ -1,6 +1,28 @@
 {
 	"name": "ppln_delta_BaseRegistration",
 	"properties": {
+		"activities": [
+			{
+				"name": "sp_BaseRegistration",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_DIM_BaseRegistration]"
+				},
+				"linkedServiceName": {
+					"referenceName": "WOF_DataWareHouse",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
 		"annotations": []
 	}
 }
