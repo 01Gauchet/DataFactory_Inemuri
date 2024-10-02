@@ -16,16 +16,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "POST",
-					"headers": {
-						"Content-Type": "application/x-www-form-urlencoded",
-						"scope": "apiKey=4167ad79-29de-4e28-85ed-0f1cd4026dfa"
-					},
 					"url": "https://online.sage.co.za/U62537/token",
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
 					},
-					"body": "a"
+					"body": {
+						"value": "grant_type=password&scope=apiKey%3D4167ad79-29de-4e28-85ed-0f1cd4026dfa",
+						"type": "Expression"
+					}
 				}
 			}
 		],
