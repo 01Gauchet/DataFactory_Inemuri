@@ -29,35 +29,11 @@
 				}
 			},
 			{
-				"name": "setToken",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "getToken",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "Sage300Token",
-					"value": {
-						"value": "@activity('getToken').output",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "getTables",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "setToken",
+						"activity": "getToken",
 						"dependencyConditions": [
 							"Succeeded"
 						]
