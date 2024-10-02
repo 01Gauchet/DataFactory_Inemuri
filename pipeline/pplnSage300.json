@@ -73,7 +73,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "POST",
-					"url": "https://online.sage.co.za/U62537/api/apibase/Header/REPORTSTOEMP",
+					"url": "https://online.sage.co.za/U62537/api/apibase/",
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
