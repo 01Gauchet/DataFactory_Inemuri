@@ -49,12 +49,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "POST",
-					"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/12",
+					"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/",
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
 					},
-					"body": "1"
+					"body": {
+						"value": "{\n  \"CompanyCode\": \"SOUTHAFRICA\",\n  \"CompanyRuleCode\": \"RSA\",\n  \"IDNumber\": \"8012138012080\"\n}",
+						"type": "Expression"
+					}
 				}
 			},
 			{
