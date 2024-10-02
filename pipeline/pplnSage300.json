@@ -49,7 +49,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "POST",
-					"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/",
+					"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/12",
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
