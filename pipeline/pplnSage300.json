@@ -1,6 +1,7 @@
 {
 	"name": "pplnSage300",
 	"properties": {
+		"description": "http://{{HostName}}:{{APIPort}}/api/apibase/Header/REPORTSTOEMP",
 		"activities": [
 			{
 				"name": "getToken",
@@ -72,7 +73,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "POST",
-					"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get",
+					"url": "https://online.sage.co.za/U62537/api/apibase/Header/REPORTSTOEMP",
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
