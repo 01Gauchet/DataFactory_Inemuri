@@ -33,7 +33,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "getToken",
+						"activity": "setToken",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -55,6 +55,30 @@
 						"type": "IntegrationRuntimeReference"
 					},
 					"body": "1"
+				}
+			},
+			{
+				"name": "setToken",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "getToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Sage300Token",
+					"value": {
+						"value": "@activity('getToken').output",
+						"type": "Expression"
+					}
 				}
 			}
 		],
