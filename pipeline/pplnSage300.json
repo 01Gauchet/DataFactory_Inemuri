@@ -76,7 +76,7 @@
 				"typeProperties": {
 					"variableName": "Sage300Token",
 					"value": {
-						"value": "@activity('getToken').output",
+						"value": "@activity('getToken').output.access_token",
 						"type": "Expression"
 					}
 				}
