@@ -51,7 +51,7 @@
 					"method": "POST",
 					"headers": {
 						"Authorization": {
-							"value": "@concat('Bearer ',variables('Sage300Token'))",
+							"value": "@variables('Sage300Token')",
 							"type": "Expression"
 						}
 					},
