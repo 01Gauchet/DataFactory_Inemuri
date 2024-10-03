@@ -50,8 +50,8 @@
 				"typeProperties": {
 					"method": "POST",
 					"headers": {
-						"Bearer": {
-							"value": "@variables('Sage300Token')",
+						"Authorization": {
+							"value": "@concat('Bearer ',variables('Sage300Token'))",
 							"type": "Expression"
 						}
 					},
