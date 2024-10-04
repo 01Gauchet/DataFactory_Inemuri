@@ -88,7 +88,7 @@
 				"typeProperties": {
 					"variableName": "varSet_Cookie",
 					"value": {
-						"value": "@string(activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie'].parameters.PeopleEssUser)",
+						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']",
 						"type": "Expression"
 					}
 				}
