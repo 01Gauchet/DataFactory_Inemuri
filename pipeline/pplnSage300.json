@@ -196,7 +196,55 @@
 				"typeProperties": {
 					"variableName": "var__cf_bm",
 					"value": {
-						"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'__cf_bm'),indexof(variables('varSet_Cookie'),'; path=/; expires=')))",
+						"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'__cf_bm'),lastindexof(variables('varSet_Cookie'),'; path=/; expires=')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "start",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get Set_Cookie",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "intStart",
+					"value": {
+						"value": "@indexof(variables('varSet_Cookie'),'XSRF-TOKEN')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "end",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get Set_Cookie",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "intEnd",
+					"value": {
+						"value": "@indexof(variables('varSet_Cookie'),'; path=/; SameSite=Lax;')",
 						"type": "Expression"
 					}
 				}
@@ -217,6 +265,12 @@
 			},
 			"varPeopleEssUser": {
 				"type": "String"
+			},
+			"intStart": {
+				"type": "Integer"
+			},
+			"intEnd": {
+				"type": "Integer"
 			}
 		},
 		"annotations": []
