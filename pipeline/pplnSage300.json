@@ -96,6 +96,8 @@
 			{
 				"name": "Set Sage Cookie",
 				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Process PeopleESSUser",
@@ -180,6 +182,8 @@
 			{
 				"name": "Process __cf_bm",
 				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "get Set_Cookie",
