@@ -232,48 +232,10 @@
 						"type": "IntegrationRuntimeReference"
 					},
 					"body": {
-						"value": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+						"value": "{\n    //\"EntityCode\" : \"API016\"\n    \"GenEntityTypeCode\" : \"INDV\",\n    \"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    //\"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
 						"type": "Expression"
 					}
 				}
-			},
-			{
-				"name": "Copy data1",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Set Sage Cookie",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.010",
-						"requestMethod": "POST",
-						"paginationRules": {
-							"supportRFC5988": "true"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "SageEmployee",
-						"type": "DatasetReference"
-					}
-				]
 			}
 		],
 		"variables": {
