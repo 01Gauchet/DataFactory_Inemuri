@@ -250,6 +250,44 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "getEntity",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Set Sage Cookie",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Cookie": {
+							"value": "@variables('varSageCookie')",
+							"type": "Expression"
+						}
+					},
+					"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"5910065134087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {
