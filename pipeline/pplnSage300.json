@@ -80,7 +80,7 @@
 				"typeProperties": {
 					"variableName": "varPeopleEssUser",
 					"value": {
-						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']",
+						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']['PeopleEssUser']",
 						"type": "Expression"
 					}
 				}
@@ -100,7 +100,14 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "varXSRF-TOKEN",
+					"value": {
+						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']['XSRF-TOKEN']",
+						"type": "Expression"
+					}
+				}
 			},
 			{
 				"name": "Set __cf_bm",
@@ -117,7 +124,14 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var__cf_bm",
+					"value": {
+						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']['__cf_bm']\n",
+						"type": "Expression"
+					}
+				}
 			},
 			{
 				"name": "Set Cookie",
@@ -156,7 +170,10 @@
 			"varXSRF-TOKEN": {
 				"type": "String"
 			},
-			"__cf_bm": {
+			"var__cf_bm": {
+				"type": "String"
+			},
+			"varSageCookie": {
 				"type": "String"
 			}
 		},
