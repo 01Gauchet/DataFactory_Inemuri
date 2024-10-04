@@ -50,8 +50,8 @@
 				"typeProperties": {
 					"method": "POST",
 					"headers": {
-						"Authorization": {
-							"value": "@variables('Sage300Token')",
+						"access_token": {
+							"value": "@variables('access_token')",
 							"type": "Expression"
 						}
 					},
@@ -83,7 +83,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "Sage300Token",
+					"variableName": "access_token",
 					"value": {
 						"value": "@activity('getToken').output.access_token",
 						"type": "Expression"
@@ -92,7 +92,7 @@
 			}
 		],
 		"variables": {
-			"Sage300Token": {
+			"access_token": {
 				"type": "String"
 			}
 		},
