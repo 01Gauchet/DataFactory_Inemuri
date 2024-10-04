@@ -200,58 +200,6 @@
 				}
 			},
 			{
-				"name": "start",
-				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [
-					{
-						"activity": "get Set_Cookie",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "intStart",
-					"value": {
-						"value": "@indexof(variables('varSet_Cookie'),'XSRF-TOKEN')",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "end",
-				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [
-					{
-						"activity": "get Set_Cookie",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "intEnd",
-					"value": {
-						"value": "@indexof(variables('varSet_Cookie'),'; path=/; SameSite=Lax;')",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "getEntity",
 				"type": "WebActivity",
 				"dependsOn": [
