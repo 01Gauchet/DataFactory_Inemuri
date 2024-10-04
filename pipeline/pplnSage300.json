@@ -85,7 +85,7 @@
 				"typeProperties": {
 					"variableName": "access_token",
 					"value": {
-						"value": "@activity('getToken').output.access_token",
+						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders.Set-Cookie",
 						"type": "Expression"
 					}
 				}
