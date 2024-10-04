@@ -194,7 +194,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "varXSRF-TOKEN",
+					"variableName": "var__cf_bm",
 					"value": {
 						"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'__cf_bm='),indexof(variables('varSet_Cookie'),'; path=/; expires=')))",
 						"type": "Expression"
