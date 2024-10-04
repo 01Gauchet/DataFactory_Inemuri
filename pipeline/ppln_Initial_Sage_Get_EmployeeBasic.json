@@ -55,6 +55,44 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "getTables",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Sage300Authentication",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Cookie": {
+							"value": "@variables('varSageCookie')",
+							"type": "Expression"
+						}
+					},
+					"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/1",
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "{\n  \"CompanyCode\": \"SOUTHAFRICA\",\n  \"CompanyRuleCode\": \"RSA\",\n  \"IDNumber\": \"8012138012080\"\n}",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"annotations": []
