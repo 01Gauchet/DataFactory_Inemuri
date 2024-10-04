@@ -140,7 +140,7 @@
 				"typeProperties": {
 					"variableName": "varPeopleEssUser",
 					"value": {
-						"value": "@string(variables('varSet_Cookie').parameters.PeopleEssUser)",
+						"value": "@concat('PeopleESSUser=',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'PeopleEssUser'),indexof(variables('varSet_Cookie'),'; path=/; expires=')))",
 						"type": "Expression"
 					}
 				}
