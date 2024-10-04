@@ -85,55 +85,7 @@
 				"typeProperties": {
 					"variableName": "varPeopleEssUser",
 					"value": {
-						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']['PeopleEssUser']",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "set XSRF-TOKEN",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "getToken",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "varXSRF-TOKEN",
-					"value": {
-						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']['XSRF-TOKEN']",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set __cf_bm",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "getToken",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "var__cf_bm",
-					"value": {
-						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']['__cf_bm']\n",
+						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']",
 						"type": "Expression"
 					}
 				}
@@ -144,18 +96,6 @@
 				"dependsOn": [
 					{
 						"activity": "set PeopleEssUser",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "set XSRF-TOKEN",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Set __cf_bm",
 						"dependencyConditions": [
 							"Succeeded"
 						]

@@ -1,0 +1,15 @@
+{
+	"name": "SageEmployee",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SageRestToken",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "01 Source"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
