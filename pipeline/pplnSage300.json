@@ -33,7 +33,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "Set Cookie",
+						"activity": "Set Sage Cookie",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -67,7 +67,8 @@
 				}
 			},
 			{
-				"name": "set PeopleEssUser",
+				"name": "get Set_Cookie",
+				"description": "get the Set-Cookie portion form output and inserting it into Set_Cookie for extraction",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
@@ -83,7 +84,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "varPeopleEssUser",
+					"variableName": "varSet_Cookie",
 					"value": {
 						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']",
 						"type": "Expression"
@@ -91,11 +92,11 @@
 				}
 			},
 			{
-				"name": "Set Cookie",
+				"name": "Set Sage Cookie",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "set PeopleEssUser",
+						"activity": "get Set_Cookie",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -109,14 +110,14 @@
 				"typeProperties": {
 					"variableName": "varSageCookie",
 					"value": {
-						"value": "@concat('PeopleEssUser=',variables('varPeopleEssUser'),'; XSRF-TOKEN=',variables('varXSRF-TOKEN'),'; __cf_bm=',variables('var__cf_bm'))",
+						"value": "@concat('PeopleEssUser=','; XSRF-TOKEN=',variables('varXSRF-TOKEN'),'; __cf_bm=',variables('var__cf_bm'))",
 						"type": "Expression"
 					}
 				}
 			}
 		],
 		"variables": {
-			"varPeopleEssUser": {
+			"varSet_Cookie": {
 				"type": "String"
 			},
 			"varXSRF-TOKEN": {
@@ -126,6 +127,9 @@
 				"type": "String"
 			},
 			"varSageCookie": {
+				"type": "String"
+			},
+			"varPeopleEssUser": {
 				"type": "String"
 			}
 		},
