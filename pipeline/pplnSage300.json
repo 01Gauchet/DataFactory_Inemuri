@@ -31,8 +31,6 @@
 			{
 				"name": "getTables",
 				"type": "WebActivity",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set Sage Cookie",
@@ -96,8 +94,6 @@
 			{
 				"name": "Set Sage Cookie",
 				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Process PeopleESSUser",
@@ -182,8 +178,6 @@
 			{
 				"name": "Process __cf_bm",
 				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "get Set_Cookie",
@@ -208,6 +202,8 @@
 			{
 				"name": "start",
 				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "get Set_Cookie",
@@ -232,6 +228,8 @@
 			{
 				"name": "end",
 				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "get Set_Cookie",
