@@ -31,6 +31,8 @@
 			{
 				"name": "getTables",
 				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set Sage Cookie",
@@ -86,7 +88,7 @@
 				"typeProperties": {
 					"variableName": "varSet_Cookie",
 					"value": {
-						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']",
+						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie'].parameters.PeopleEssUser",
 						"type": "Expression"
 					}
 				}
@@ -94,9 +96,11 @@
 			{
 				"name": "Set Sage Cookie",
 				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
-						"activity": "get Set_Cookie",
+						"activity": "Process Cookies",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -111,6 +115,32 @@
 					"variableName": "varSageCookie",
 					"value": {
 						"value": "@concat('PeopleEssUser=','; XSRF-TOKEN=',variables('varXSRF-TOKEN'),'; __cf_bm=',variables('var__cf_bm'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Process Cookies",
+				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "get Set_Cookie",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "varPeopleEssUser",
+					"value": {
+						"value": "@string(variables('varSet_Cookie').parameters.PeopleEssUser)",
 						"type": "Expression"
 					}
 				}
