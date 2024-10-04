@@ -118,7 +118,7 @@
 						"type": "WebActivity",
 						"dependsOn": [
 							{
-								"activity": "setToken",
+								"activity": "Set Sage Cookie",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -135,8 +135,8 @@
 						"typeProperties": {
 							"method": "POST",
 							"headers": {
-								"access_token": {
-									"value": "@variables('access_token')",
+								"Cookie": {
+									"value": "@variables('varSageCookie')",
 									"type": "Expression"
 								}
 							},
@@ -152,7 +152,8 @@
 						}
 					},
 					{
-						"name": "setToken",
+						"name": "get Set_Cookie",
+						"description": "get the Set-Cookie portion form output and inserting it into Set_Cookie for extraction",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
@@ -168,9 +169,207 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"variableName": "access_token",
+							"variableName": "varSet_Cookie",
 							"value": {
-								"value": "@activity('getToken').output.ADFWebActivityResponseHeaders.Set-Cookie",
+								"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set Sage Cookie",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Process PeopleESSUser",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Process XSRF-Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Process __cf_bm",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "varSageCookie",
+							"value": {
+								"value": "@concat(variables('varPeopleEssUser'),';',variables('varXSRF-TOKEN'),';',variables('var__cf_bm'))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Process PeopleESSUser",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "get Set_Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "varPeopleEssUser",
+							"value": {
+								"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'PeopleEssUser'),indexof(variables('varSet_Cookie'),'; path=/; expires=')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Process XSRF-Token",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "get Set_Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "varXSRF-TOKEN",
+							"value": {
+								"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'XSRF-TOKEN'),sub(indexof(variables('varSet_Cookie'),'; path=/; SameSite=Lax;'),indexof(variables('varSet_Cookie'),'XSRF-TOKEN'))))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Process __cf_bm",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "get Set_Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "var__cf_bm",
+							"value": {
+								"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'__cf_bm'),sub(lastindexof(variables('varSet_Cookie'),'; path=/; expires='),indexof(variables('varSet_Cookie'),'__cf_bm'))))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "start",
+						"type": "SetVariable",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "get Set_Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "intStart",
+							"value": {
+								"value": "@indexof(variables('varSet_Cookie'),'XSRF-TOKEN')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "end",
+						"type": "SetVariable",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "get Set_Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "intEnd",
+							"value": {
+								"value": "@indexof(variables('varSet_Cookie'),'; path=/; SameSite=Lax;')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "getEntity",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Set Sage Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Cookie": {
+									"value": "@variables('varSageCookie')",
+									"type": "Expression"
+								}
+							},
+							"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"5910065134087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -180,8 +379,26 @@
 					"elapsedTimeMetric": {}
 				},
 				"variables": {
-					"access_token": {
+					"varSet_Cookie": {
 						"type": "String"
+					},
+					"varXSRF-TOKEN": {
+						"type": "String"
+					},
+					"var__cf_bm": {
+						"type": "String"
+					},
+					"varSageCookie": {
+						"type": "String"
+					},
+					"varPeopleEssUser": {
+						"type": "String"
+					},
+					"intStart": {
+						"type": "Integer"
+					},
+					"intEnd": {
+						"type": "Integer"
 					}
 				},
 				"annotations": []
@@ -1035,6 +1252,29 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/WOF Linked Service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SageEmployee')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SageRestToken",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "01 Source"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SageRestToken')]"
 			]
 		},
 		{
