@@ -31,14 +31,7 @@
 			{
 				"name": "getTables",
 				"type": "WebActivity",
-				"dependsOn": [
-					{
-						"activity": "set PeopleEssUser",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -83,7 +76,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "access_token",
+					"variableName": "varPeopleEssUser",
 					"value": {
 						"value": "@activity('getToken').output.ADFWebActivityResponseHeaders['Set-Cookie']",
 						"type": "Expression"
@@ -123,10 +116,45 @@
 					"secureInput": false
 				},
 				"userProperties": []
+			},
+			{
+				"name": "Set Cookie",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "set PeopleEssUser",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "set XSRF-TOKEN",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set __cf_bm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
 			}
 		],
 		"variables": {
-			"access_token": {
+			"varPeopleEssUser": {
+				"type": "String"
+			},
+			"varXSRF-TOKEN": {
+				"type": "String"
+			},
+			"__cf_bm": {
 				"type": "String"
 			}
 		},
