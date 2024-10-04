@@ -172,7 +172,7 @@
 				"typeProperties": {
 					"variableName": "varXSRF-TOKEN",
 					"value": {
-						"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'XSRF-TOKEN='),indexof(variables('varSet_Cookie'),'; path=/; SameSite=Lax;')))",
+						"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'XSRF-TOKEN'),indexof(variables('varSet_Cookie'),'; path=/; SameSite=Lax;')))",
 						"type": "Expression"
 					}
 				}
@@ -196,7 +196,7 @@
 				"typeProperties": {
 					"variableName": "var__cf_bm",
 					"value": {
-						"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'__cf_bm='),indexof(variables('varSet_Cookie'),'; path=/; expires=')))",
+						"value": "@concat('',substring(variables('varSet_Cookie'),indexof(variables('varSet_Cookie'),'__cf_bm'),indexof(variables('varSet_Cookie'),'; path=/; expires=')))",
 						"type": "Expression"
 					}
 				}
