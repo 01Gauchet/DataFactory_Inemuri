@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'WOF_DataWareHouse'"
 		},
+		"SageRestToken_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/token"
+		},
 		"WOF Linked Service_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "inemuri.database.windows.net"
@@ -71,6 +75,9 @@
 					},
 					"WOF_DataWareHouse_password": {
 						"value": "[parameters('WOF_DataWareHouse_password')]"
+					},
+					"SageRestToken_properties_typeProperties_url": {
+						"value": "[parameters('SageRestToken_properties_typeProperties_url')]"
 					},
 					"WOF Linked Service_properties_typeProperties_server": {
 						"value": "[parameters('WOF Linked Service_properties_typeProperties_server')]"

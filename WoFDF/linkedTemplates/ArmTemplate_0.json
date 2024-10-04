@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'WOF_DataWareHouse'"
 		},
+		"SageRestToken_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/token"
+		},
 		"WOF Linked Service_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "inemuri.database.windows.net"
@@ -74,6 +78,137 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pplnSage300')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "http://{{HostName}}:{{APIPort}}/api/apibase/Header/REPORTSTOEMP",
+				"activities": [
+					{
+						"name": "getToken",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://online.sage.co.za/U62537/token",
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "grant_type=password&scope=apiKey%3D4167ad79-29de-4e28-85ed-0f1cd4026dfa",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "getTables",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "setToken",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"access_token": {
+									"value": "@variables('access_token')",
+									"type": "Expression"
+								}
+							},
+							"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/1",
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n  \"CompanyCode\": \"SOUTHAFRICA\",\n  \"CompanyRuleCode\": \"RSA\",\n  \"IDNumber\": \"8012138012080\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "setToken",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "getToken",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "access_token",
+							"value": {
+								"value": "@activity('getToken').output.ADFWebActivityResponseHeaders.Set-Cookie",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"access_token": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SageRestToken')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('SageRestToken_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
