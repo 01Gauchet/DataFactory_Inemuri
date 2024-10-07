@@ -95,6 +95,17 @@
 				}
 			}
 		],
+		"parameters": {
+			"parPeopleESSUser": {
+				"type": "string"
+			},
+			"parXSRF_Token": {
+				"type": "string"
+			},
+			"parcf_bm": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "01 Dev"
 		},
