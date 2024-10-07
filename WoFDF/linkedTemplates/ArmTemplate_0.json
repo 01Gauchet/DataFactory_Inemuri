@@ -81,7 +81,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pplnSage300')]",
+			"name": "[concat(parameters('factoryName'), '/pplnSage300_Cookie')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -285,58 +285,6 @@
 						}
 					},
 					{
-						"name": "start",
-						"type": "SetVariable",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "get Set_Cookie",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "intStart",
-							"value": {
-								"value": "@indexof(variables('varSet_Cookie'),'XSRF-TOKEN')",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "end",
-						"type": "SetVariable",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "get Set_Cookie",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "intEnd",
-							"value": {
-								"value": "@indexof(variables('varSet_Cookie'),'; path=/; SameSite=Lax;')",
-								"type": "Expression"
-							}
-						}
-					},
-					{
 						"name": "getEntity",
 						"type": "WebActivity",
 						"dependsOn": [
@@ -369,7 +317,7 @@
 								"type": "IntegrationRuntimeReference"
 							},
 							"body": {
-								"value": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : [\"5910065134087\",\"8504020702083\"]\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+								"value": "{\n    //\"EntityCode\" : \"API016\"\n    \"GenEntityTypeCode\" : \"INDV\",\n    \"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    //\"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -400,6 +348,64 @@
 					"intEnd": {
 						"type": "Integer"
 					}
+				},
+				"folder": {
+					"name": "01 Dev"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_Initial_Sage_Get_EmployeeBasic')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "getTables",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Cookie": {
+									"value": "@pipeline().parameters.parCookie",
+									"type": "Expression"
+								}
+							},
+							"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/1",
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n  \"CompanyCode\": \"SOUTHAFRICA\",\n  \"CompanyRuleCode\": \"RSA\",\n  \"IDNumber\": \"8012138012080\"\n}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"parCookie": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "01 Dev"
 				},
 				"annotations": []
 			},
@@ -568,10 +574,36 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
+				"folder": {
+					"name": "01 Dev"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/WOF_DataWareHouse')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SageEmployee')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SageRestToken",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "01 Source"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SageRestToken')]"
 			]
 		},
 		{
@@ -1255,33 +1287,82 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SageEmployee')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SageRestToken",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "01 Source"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": "https://online.sage.co.za/U62537/api/apibase/entity/get"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SageRestToken')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ppln_initialPipeline')]",
+			"name": "[concat(parameters('factoryName'), '/ppln_stage_EmployBasic')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"activities": [
+					{
+						"name": "Exec Get Cookie",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pplnSage300_Cookie",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Exec Process EmployeeBasic",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Exec Get Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ppln_Initial_Sage_Get_EmployeeBasic",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"parCookie": {
+									"value": "@variables('varCookie')",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"varCookie": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "01 Dev"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pplnSage300_Cookie')]",
+				"[concat(variables('factoryId'), '/pipelines/ppln_Initial_Sage_Get_EmployeeBasic')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_initialPipeline_DCTOOL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Initial pipeline to get raw",
 				"activities": [
 					{
 						"name": "cpy_DC_Tool",
@@ -2014,6 +2095,9 @@
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "01 Dev"
 				},
 				"annotations": []
 			},
