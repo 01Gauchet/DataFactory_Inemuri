@@ -41,7 +41,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"parCookie": {
-							"value": "@variables('varCookie')",
+							"value": "@activity('Exec Get Cookie').output.pipelineReturnValue",
 							"type": "Expression"
 						}
 					}
