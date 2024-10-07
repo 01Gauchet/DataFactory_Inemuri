@@ -1,6 +1,7 @@
 {
-	"name": "ppln_initialPipeline",
+	"name": "ppln_initialPipeline_DCTOOL",
 	"properties": {
+		"description": "Initial pipeline to get raw",
 		"activities": [
 			{
 				"name": "cpy_DC_Tool",
