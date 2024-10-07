@@ -66,7 +66,7 @@
 				"typeProperties": {
 					"variableName": "varCookie",
 					"value": {
-						"value": "@activity('Exec Get Cookie').output.pipelineReturnValue.value",
+						"value": "@activity('Exec Get Cookie').output.pipelineReturnValue.retCookie",
 						"type": "Expression"
 					}
 				}
