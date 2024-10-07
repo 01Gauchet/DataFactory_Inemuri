@@ -31,6 +31,8 @@
 			{
 				"name": "getTables",
 				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set Sage Cookie",
@@ -202,6 +204,8 @@
 			{
 				"name": "getEntity",
 				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set Sage Cookie",
