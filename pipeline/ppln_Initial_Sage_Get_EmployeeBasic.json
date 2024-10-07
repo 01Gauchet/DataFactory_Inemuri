@@ -91,6 +91,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@activity('LookupIDS').output",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "getEntity_copy1",
@@ -121,7 +125,7 @@
 									"type": "IntegrationRuntimeReference"
 								},
 								"body": {
-									"value": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\",\n    //\"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+									"value": "@string('')\n",
 									"type": "Expression"
 								}
 							}
