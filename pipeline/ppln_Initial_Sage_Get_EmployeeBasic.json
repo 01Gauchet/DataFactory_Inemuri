@@ -60,7 +60,10 @@
 							"type": "Expression"
 						}
 					},
-					"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
+					"url": {
+						"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+						"type": "Expression"
+					},
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
