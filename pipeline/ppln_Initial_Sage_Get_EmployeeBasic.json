@@ -51,7 +51,7 @@
 					"method": "POST",
 					"headers": {
 						"Cookie": {
-							"value": "@variables('varSageCookie')",
+							"value": "@pipeline().parameters.parCookie",
 							"type": "Expression"
 						}
 					},
