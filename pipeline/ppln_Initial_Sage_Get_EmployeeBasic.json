@@ -12,7 +12,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pplnSage300",
+						"referenceName": "pplnSage300_Cookie",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true

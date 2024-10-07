@@ -1,5 +1,5 @@
 {
-	"name": "pplnSage300",
+	"name": "pplnSage300_Cookie",
 	"properties": {
 		"description": "http://{{HostName}}:{{APIPort}}/api/apibase/Header/REPORTSTOEMP",
 		"activities": [
