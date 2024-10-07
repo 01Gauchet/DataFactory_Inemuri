@@ -95,6 +95,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "01 Dev"
+		},
 		"annotations": []
 	}
 }
