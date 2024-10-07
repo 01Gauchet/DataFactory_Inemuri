@@ -1,0 +1,86 @@
+{
+	"name": "tb_DIM_ParticipantBasicDetails",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "WOF_DataWareHouse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "02 Target"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ParticipantBasicDetails_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "NAMES",
+				"type": "varchar"
+			},
+			{
+				"name": "EL",
+				"type": "varchar"
+			},
+			{
+				"name": "SURNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "ID Number",
+				"type": "varchar"
+			},
+			{
+				"name": "Job Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Daily Wage rate",
+				"type": "varchar"
+			},
+			{
+				"name": "COUNTRY OF ORIGIN",
+				"type": "varchar"
+			},
+			{
+				"name": "DATE OF BIRTH",
+				"type": "varchar"
+			},
+			{
+				"name": "GENDER",
+				"type": "varchar"
+			},
+			{
+				"name": "AGE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RACE",
+				"type": "varchar"
+			},
+			{
+				"name": "DISABILITY",
+				"type": "varchar"
+			},
+			{
+				"name": "Government Grant",
+				"type": "varchar"
+			},
+			{
+				"name": "Start Date",
+				"type": "date"
+			},
+			{
+				"name": "Date Exited project",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tb_DIM_ParticipantBasicDetails"
+		}
+	}
+}
