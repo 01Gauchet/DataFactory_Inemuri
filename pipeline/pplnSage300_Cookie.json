@@ -29,46 +29,6 @@
 				}
 			},
 			{
-				"name": "getTables",
-				"type": "WebActivity",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [
-					{
-						"activity": "Set Sage Cookie",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"method": "POST",
-					"headers": {
-						"Cookie": {
-							"value": "@variables('varSageCookie')",
-							"type": "Expression"
-						}
-					},
-					"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/1",
-					"connectVia": {
-						"referenceName": "AutoResolveIntegrationRuntime",
-						"type": "IntegrationRuntimeReference"
-					},
-					"body": {
-						"value": "{\n  \"CompanyCode\": \"SOUTHAFRICA\",\n  \"CompanyRuleCode\": \"RSA\",\n  \"IDNumber\": \"8012138012080\"\n}",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "get Set_Cookie",
 				"description": "get the Set-Cookie portion form output and inserting it into Set_Cookie for extraction",
 				"type": "SetVariable",
@@ -202,10 +162,8 @@
 				}
 			},
 			{
-				"name": "getEntity",
-				"type": "WebActivity",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
+				"name": "Set PipelineReturn",
+				"type": "SetVariable",
 				"dependsOn": [
 					{
 						"activity": "Set Sage Cookie",
@@ -215,30 +173,22 @@
 					}
 				],
 				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
 					"secureInput": false
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"method": "POST",
-					"headers": {
-						"Cookie": {
-							"value": "@variables('varSageCookie')",
-							"type": "Expression"
+					"variableName": "pipelineReturnValue",
+					"value": [
+						{
+							"key": "retCookie",
+							"value": {
+								"type": "Expression",
+								"content": "@variables('varSageCookie')"
+							}
 						}
-					},
-					"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
-					"connectVia": {
-						"referenceName": "AutoResolveIntegrationRuntime",
-						"type": "IntegrationRuntimeReference"
-					},
-					"body": {
-						"value": "{\n    //\"EntityCode\" : \"API016\"\n    \"GenEntityTypeCode\" : \"INDV\",\n    \"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    //\"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
-						"type": "Expression"
-					}
+					],
+					"setSystemVariable": true
 				}
 			}
 		],
