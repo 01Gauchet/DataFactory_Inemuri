@@ -5,6 +5,8 @@
 			{
 				"name": "getTables",
 				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "getEntity",
@@ -43,6 +45,8 @@
 			{
 				"name": "getEntity",
 				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -73,6 +77,70 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "ForEachEmployeeID",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LookupIDS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"activities": [
+						{
+							"name": "getEntity_copy1",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"method": "POST",
+								"headers": {
+									"Cookie": {
+										"value": "@pipeline().parameters.parCookie",
+										"type": "Expression"
+									}
+								},
+								"url": {
+									"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+									"type": "Expression"
+								},
+								"connectVia": {
+									"referenceName": "AutoResolveIntegrationRuntime",
+									"type": "IntegrationRuntimeReference"
+								},
+								"body": {
+									"value": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\",\n    //\"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "LookupIDS",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
 			}
 		],
 		"parameters": {
