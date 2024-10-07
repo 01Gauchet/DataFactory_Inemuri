@@ -19,7 +19,7 @@
 				}
 			},
 			{
-				"name": "Execute Pipeline2",
+				"name": "Exec Process EmployeeBasic",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -38,7 +38,13 @@
 						"referenceName": "ppln_Initial_Sage_Get_EmployeeBasic",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"parCookie": {
+							"value": "@variables('varCookie')",
+							"type": "Expression"
+						}
+					}
 				}
 			}
 		],
