@@ -23,7 +23,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Exec Get Cookie",
+						"activity": "Set Cookie",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -41,9 +41,33 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"parCookie": {
-							"value": "@activity('Exec Get Cookie').output.pipelineReturnValue",
+							"value": "@variables('varCookie')",
 							"type": "Expression"
 						}
+					}
+				}
+			},
+			{
+				"name": "Set Cookie",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Exec Get Cookie",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "varCookie",
+					"value": {
+						"value": "@activity('Exec Get Cookie').output.pipelineReturnValue",
+						"type": "Expression"
 					}
 				}
 			}
