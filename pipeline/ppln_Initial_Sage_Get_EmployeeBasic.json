@@ -99,6 +99,8 @@
 						{
 							"name": "getEntity_ID",
 							"type": "WebActivity",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [],
 							"policy": {
 								"timeout": "0.12:00:00",
@@ -156,11 +158,14 @@
 									"requestInterval": "00.00:00:00.010",
 									"requestMethod": "POST",
 									"requestBody": {
-										"value": "@concat('{\"IDNumber\" : \"',item()['ID Number'],'\"}')",
+										"value": "@concat('{\"IDNumber\" : \"9106126400080\"}')",
 										"type": "Expression"
 									},
 									"additionalHeaders": {
-										"Cookie": "@pipeline().parameters.parCookie"
+										"Cookie": {
+											"value": "@pipeline().parameters.parCookie",
+											"type": "Expression"
+										}
 									}
 								},
 								"sink": {
