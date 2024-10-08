@@ -5,9 +5,14 @@
 			{
 				"name": "getEmployee",
 				"type": "WebActivity",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ForEachEmployeeID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -183,7 +188,14 @@
 			{
 				"name": "Copy data2",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "getEntity_ID_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -225,6 +237,40 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "getEntity_ID_copy1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Cookie": {
+							"value": "@pipeline().parameters.parCookie",
+							"type": "Expression"
+						}
+					},
+					"url": {
+						"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
