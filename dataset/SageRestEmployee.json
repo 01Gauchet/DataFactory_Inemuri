@@ -2,7 +2,7 @@
 	"name": "SageRestEmployee",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "SageRestToken",
+			"referenceName": "SageRestGetEntity",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -11,7 +11,7 @@
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
-			"relativeUrl": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+			"relativeUrl": ""
 		},
 		"schema": []
 	}
