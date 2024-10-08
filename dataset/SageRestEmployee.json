@@ -5,11 +5,6 @@
 			"referenceName": "SageRestGetEntity",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"parCookie": {
-				"type": "string"
-			}
-		},
 		"folder": {
 			"name": "01 Source"
 		},
