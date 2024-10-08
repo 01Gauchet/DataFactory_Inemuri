@@ -23,6 +23,7 @@
 				"     limit: 100,",
 				"     format: 'rest',",
 				"     timeout: 30,",
+				"     entity: 'https://online.sage.co.za/U62537/api/apibase/entity/get',",
 				"     httpMethod: 'POST',",
 				"     body: ({\"IDNumber\" : \"8010040877087\"}),",
 				"     paginationRules: ['supportRFC5988' -> 'true'],",
