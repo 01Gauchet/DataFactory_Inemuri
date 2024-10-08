@@ -1,5 +1,5 @@
 {
-	"name": "SageEmployee",
+	"name": "SageRestEmployee",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "SageRestToken",
