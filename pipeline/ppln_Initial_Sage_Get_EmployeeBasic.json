@@ -125,7 +125,7 @@
 									"type": "IntegrationRuntimeReference"
 								},
 								"body": {
-									"value": "@string('')\n",
+									"value": "@concat('{',item())",
 									"type": "Expression"
 								}
 							}
