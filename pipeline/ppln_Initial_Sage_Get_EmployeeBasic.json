@@ -125,7 +125,7 @@
 									"type": "IntegrationRuntimeReference"
 								},
 								"body": {
-									"value": "@concat('{\"IDNumber\" : \"',item().value,'\"}')\n\n    ",
+									"value": "@concat('{\"IDNumber\" : \"',item().IDNumber,'\"}')",
 									"type": "Expression"
 								}
 							}
