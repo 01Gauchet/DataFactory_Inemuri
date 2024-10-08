@@ -125,7 +125,7 @@
 									"type": "IntegrationRuntimeReference"
 								},
 								"body": {
-									"value": "@concat('{\"IDNumber\" : \"',item())\n\n    ",
+									"value": "@concat('{\"IDNumber\" : \"',item(),'\"}')\n\n    ",
 									"type": "Expression"
 								}
 							}
@@ -156,7 +156,7 @@
 						"referenceName": "tb_DIM_ParticipantBasicDetails",
 						"type": "DatasetReference"
 					},
-					"firstRowOnly": false
+					"firstRowOnly": true
 				}
 			}
 		],
