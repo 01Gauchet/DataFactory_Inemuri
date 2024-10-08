@@ -97,7 +97,7 @@
 					},
 					"activities": [
 						{
-							"name": "getEntity_copy1",
+							"name": "getEntity_ID",
 							"type": "WebActivity",
 							"dependsOn": [],
 							"policy": {
