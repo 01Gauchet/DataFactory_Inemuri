@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "getTables",
+				"name": "getEmployee",
 				"type": "WebActivity",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
