@@ -155,7 +155,8 @@
 					"dataset": {
 						"referenceName": "tb_DIM_ParticipantBasicDetails",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
