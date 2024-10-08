@@ -204,7 +204,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select [ID Number] from tb_DIM_ParticipantBasicDetails",
+						"sqlReaderQuery": "select top 2 [ID Number] from tb_DIM_ParticipantBasicDetails;",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -212,7 +212,7 @@
 						"referenceName": "tb_DIM_ParticipantBasicDetails",
 						"type": "DatasetReference"
 					},
-					"firstRowOnly": true
+					"firstRowOnly": false
 				}
 			}
 		],
