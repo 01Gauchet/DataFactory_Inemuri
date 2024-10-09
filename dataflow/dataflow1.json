@@ -10,13 +10,6 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "Inline"
-				},
-				{
-					"dataset": {
-						"referenceName": "SageRestEmployee",
-						"type": "DatasetReference"
-					},
-					"name": "dataSet"
 				}
 			],
 			"sinks": [],
@@ -30,18 +23,10 @@
 				"     limit: 100,",
 				"     format: 'rest',",
 				"     timeout: 30,",
-				"     entity: 'https://online.sage.co.za/U62537/api/apibase/entity/get',",
 				"     httpMethod: 'POST',",
-				"     body: (toString({dayOfYear(datetime)})),",
+				"     body: ({\"IDNumber\" : \"8010040877087\"}),",
 				"     paginationRules: ['supportRFC5988' -> 'true'],",
-				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> Inline",
-				"source(allowSchemaDrift: false,",
-				"     validateSchema: true,",
-				"     httpMethod: 'GET',",
-				"     timeout: 30,",
-				"     requestInterval: 0,",
-				"     paginationRules: ['supportRFC5988' -> 'true'],",
-				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> dataSet"
+				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> Inline"
 			]
 		}
 	}
