@@ -6,10 +6,6 @@
 		"typeProperties": {
 			"url": "sss",
 			"authenticationType": "Anonymous"
-		},
-		"connectVia": {
-			"referenceName": "Sage300IntRun",
-			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
