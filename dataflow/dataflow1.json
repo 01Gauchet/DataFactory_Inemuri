@@ -24,7 +24,7 @@
 				"     format: 'rest',",
 				"     timeout: 30,",
 				"     httpMethod: 'POST',",
-				"     body: ({\"IDNumber\" : \"8010040877087\"}),",
+				"     body: (toString(\"IDNumber:'8010040877087'\")),",
 				"     paginationRules: ['supportRFC5988' -> 'true'],",
 				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> Inline"
 			]
