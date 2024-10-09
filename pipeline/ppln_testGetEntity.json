@@ -1,6 +1,103 @@
 {
 	"name": "ppln_testGetEntity",
 	"properties": {
+		"activities": [
+			{
+				"name": "getEntity_ID_copy1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Cookie": {
+							"value": "@pipeline().parameters.parCookie",
+							"type": "Expression"
+						}
+					},
+					"url": {
+						"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Copy data2",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "getEntity_ID_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "POST",
+						"requestBody": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\",\n    //\"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+						"additionalHeaders": {
+							"Cookie": {
+								"value": "@pipeline().parameters.parCookie",
+								"type": "Expression"
+							}
+						},
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "SageRestEmployee",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tb_DIM_ParticipantBasicDetails",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"parCookie": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "01 Dev"
 		},
