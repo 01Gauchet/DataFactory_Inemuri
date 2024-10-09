@@ -65,14 +65,14 @@
 							"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
 							"type": "Expression"
 						},
-						"additionalHeaders": {
+						"paginationRules": {
+							"supportRFC5988": "true"
+						},
+						"Headers": {
 							"Cookie": {
 								"value": "@pipeline().parameters.parCookie",
 								"type": "Expression"
 							}
-						},
-						"paginationRules": {
-							"supportRFC5988": "true"
 						}
 					},
 					"sink": {
