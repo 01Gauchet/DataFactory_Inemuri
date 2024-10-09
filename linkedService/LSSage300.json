@@ -1,0 +1,15 @@
+{
+	"name": "LSSage300",
+	"properties": {
+		"annotations": [],
+		"type": "Web",
+		"typeProperties": {
+			"url": "sss",
+			"authenticationType": "Anonymous"
+		},
+		"connectVia": {
+			"referenceName": "Sage300IntRun",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
