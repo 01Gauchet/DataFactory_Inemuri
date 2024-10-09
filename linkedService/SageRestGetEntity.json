@@ -8,7 +8,9 @@
 			"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "None",
-			"Cookie": ""
+			"headers": {
+				"Cookie": "ads"
+			}
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
