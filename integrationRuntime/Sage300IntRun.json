@@ -1,7 +1,0 @@
-{
-	"name": "Sage300IntRun",
-	"properties": {
-		"type": "SelfHosted",
-		"description": "Integration Runtime for Sage 300"
-	}
-}
