@@ -9,14 +9,14 @@
 						"referenceName": "SageRestGetEntity",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source1"
+					"name": "Inline"
 				},
 				{
 					"dataset": {
 						"referenceName": "SageRestEmployee",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "dataSet"
 				}
 			],
 			"sinks": [],
@@ -34,14 +34,14 @@
 				"     httpMethod: 'POST',",
 				"     body: (toString({dayOfYear(datetime)})),",
 				"     paginationRules: ['supportRFC5988' -> 'true'],",
-				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> source1",
+				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> Inline",
 				"source(allowSchemaDrift: false,",
 				"     validateSchema: true,",
 				"     httpMethod: 'GET',",
 				"     timeout: 30,",
 				"     requestInterval: 0,",
 				"     paginationRules: ['supportRFC5988' -> 'true'],",
-				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> source2"
+				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> dataSet"
 			]
 		}
 	}
