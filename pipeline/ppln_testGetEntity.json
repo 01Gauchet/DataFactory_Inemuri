@@ -1,0 +1,9 @@
+{
+	"name": "ppln_testGetEntity",
+	"properties": {
+		"folder": {
+			"name": "01 Dev"
+		},
+		"annotations": []
+	}
+}
