@@ -7,10 +7,7 @@
 		"typeProperties": {
 			"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "None",
-			"headers": {
-				"Cookie": "PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAAAB5LwcM1BgPbjHr9cwIbvord9wAuhxC3TDGtziJuDunAAAAAAOgAAAAAIAACAAAAB8FJEL94p6QLcwYMYq_ONLJxBYJOddK6w1jMYaeCMbA8ABAAAA1fxDoKtHWAGCF76fpi2PWQV5NExmonL8WLosOOjHDAcij9M95u9hWJdX643K_TNwt5nWQDgnDKx8vWyt2_vbCf_VXWydFC7v2cX-f_X6UwjL0UKeJG8pEYwUGRB6d6kD1fqq9KUqccCYKZgVHUYxt7jQWWYDP4xwnMDJEOCFe7u3ZTgW7pts-uyfACdXo37jmRtPpsUWMDwmG_ic_k_iCRfK6cCTggoSkm0T6WrwpJiE9uiYsdpwkJOj__OtM0vYwmwbznDcNyrHbWPvnwwathj7JVdjIYehPqU0oZYMWtz2xP0U7YsXBeeagsZwGDqYaMTSxyWW3rPX242rGB6KNXagkmTS_oAnsZ3RQdA_7iCAlQnvs_e3NL3HDkzHa4XBAv-VcMmW-iegsQn0Ah4ujw2QMz7GkCXGEKPfkCD2hOXzM0KlYcUu5ZxOPUNNKrv80Jn3vh3jQmyzk1P5L9UmtAqSf8UfGdgKMpWMc4PrnUnxDtgK72TP_MjxvYVgO7pV3WD29-WPosStXytWC5IfvKlh4rw-qksI6ewoZvi1uCMqOJhYisRYFUnXvMuMm7HK322U9i3yjFlCs17xRWFfQAAAAFlD3Z5elUM-3ZxJ3Pqx2nMW_b5KdMlP_QdIIhKyeBm-UP4yrIALA49_tZHY1SQvL4WgHBSDHnkOHHRiEER_qiE;XSRF-TOKEN=ZePD3xpZKX15TFIytppANut1r5oF6lb_5qT6dbHX_08ZAJVvDbjLmhoRAMwRgTQ9uW0zpGMt7ka-JBaqOSUKsQ2;__cf_bm=3fNMT15IRYry6jMDBTnN9HCI4kdkPrS.twdz_a0vOeE-1728457529-1.0.1.1-Evy6Dz2qoaLPVFxSiNnEl2C_nhFiuTfW2hmlsx25WhqR9qVHaZAUQDvAYuVI0Xn6Hx1TVobyhUjFvPZfd.5lYA"
-			}
+			"authenticationType": "None"
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
