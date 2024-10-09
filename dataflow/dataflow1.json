@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"linkedService": {
-						"referenceName": "SageRestToken",
+						"referenceName": "SageRestGetEntity",
 						"type": "LinkedServiceReference"
 					},
 					"name": "source1"
@@ -18,8 +18,8 @@
 				"parameters{",
 				"     parCookie as string",
 				"}",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false,",
+				"source(allowSchemaDrift: false,",
+				"     validateSchema: true,",
 				"     limit: 100,",
 				"     format: 'rest',",
 				"     timeout: 30,",
