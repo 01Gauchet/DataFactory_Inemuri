@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "getEntity_ID",
+				"name": "web_getEntity_ID",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -41,7 +41,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "getEntity_ID",
+						"activity": "web_getEntity_ID",
 						"dependencyConditions": [
 							"Succeeded"
 						]
