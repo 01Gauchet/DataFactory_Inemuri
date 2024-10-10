@@ -1,17 +1,17 @@
 {
 	"name": "SageRestGetEntity",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
 			"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
-			"enableServerCertificateValidation": true,
-			"authenticationType": "None"
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Anonymous"
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
