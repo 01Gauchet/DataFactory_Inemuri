@@ -1,0 +1,7 @@
+{
+	"name": "irSage300",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Self hosted Sage300 integration runtime"
+	}
+}
