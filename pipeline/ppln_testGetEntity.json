@@ -125,12 +125,6 @@
 						"type": "JsonSource",
 						"storeSettings": {
 							"type": "HttpReadSettings",
-							"headers": {
-								"Cookie": {
-									"value": "@pipeline().parameters.parCookie",
-									"type": "Expression"
-								}
-							},
 							"body": {
 								"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
 								"type": "Expression"
