@@ -1,12 +1,15 @@
 {
 	"name": "LSSage300",
 	"properties": {
+		"annotations": [],
 		"type": "Web",
+		"typeProperties": {
+			"url": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+		},
 		"connectVia": {
 			"referenceName": "irSage300",
 			"type": "IntegrationRuntimeReference"
-		},
-		"annotations": []
+		}
 	},
 	"method": "POST",
 	"headers": {
