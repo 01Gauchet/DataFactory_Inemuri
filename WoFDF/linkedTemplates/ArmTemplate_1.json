@@ -1,0 +1,1344 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "WoFDF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_Initial_Sage_Get_EmployeeBasic')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "getEmployee",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ForEachEmployeeID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Cookie": {
+									"value": "@pipeline().parameters.parCookie",
+									"type": "Expression"
+								}
+							},
+							"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/1",
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n  \"CompanyCode\": \"SOUTHAFRICA\",\n  \"CompanyRuleCode\": \"RSA\",\n  \"IDNumber\": \"8012138012080\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEachEmployeeID",
+						"type": "ForEach",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "LookupIDS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LookupIDS').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "getEntity_ID",
+									"type": "WebActivity",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "POST",
+										"headers": {
+											"Cookie": {
+												"value": "@pipeline().parameters.parCookie",
+												"type": "Expression"
+											}
+										},
+										"url": {
+											"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+											"type": "Expression"
+										},
+										"connectVia": {
+											"referenceName": "AutoResolveIntegrationRuntime",
+											"type": "IntegrationRuntimeReference"
+										},
+										"body": {
+											"value": "@concat('{\"IDNumber\" : \"',item()['ID Number'],'\"}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [
+										{
+											"activity": "getEntity_ID",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "POST",
+											"requestBody": {
+												"value": "@concat('{\"IDNumber\" : \"9106126400080\"}')",
+												"type": "Expression"
+											},
+											"additionalHeaders": {
+												"Cookie": {
+													"value": "@pipeline().parameters.parCookie",
+													"type": "Expression"
+												}
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "SageRestEmployee",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "tb_DIM_ParticipantBasicDetails",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "LookupIDS",
+						"type": "Lookup",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select top 2 [ID Number] from tb_DIM_ParticipantBasicDetails;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Copy data2",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "getEntity_ID_copy1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "POST",
+								"requestBody": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\",\n    //\"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+								"additionalHeaders": {
+									"Cookie": {
+										"value": "@pipeline().parameters.parCookie",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "SageRestEmployee",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "getEntity_ID_copy1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Cookie": {
+									"value": "@pipeline().parameters.parCookie",
+									"type": "Expression"
+								}
+							},
+							"url": {
+								"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"parCookie": {
+						"type": "string",
+						"defaultValue": "PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAACxmCavOJoh9ij-GgrQ7w1easEBCJtkJnuPlyDpbrXWPwAAAAAOgAAAAAIAACAAAAAvyJQ_lK0ekt6IsHw-_66N63t3AwyR2R3d9XNyqdm8osABAADsWihjgcAsFFNqrYFI4uvMrhBAAHukM2cgzgldiveOK65dDZ-fJh64lMdJYZJqlLMRrLW1UhzsRz1xzveQ2XsSwhzB_9tU5LQ9uSY4MAmHnTdHIat7pW1GWkKg_ohE4twfWpPNUvmNSypCnyqnEkruU8QVR3UxZHo_RGHaoeYTDkn8GqsjW4dNZgTzHXSF5dxddCzZePso8uu9QjFlqw9KJKeavGJ4YvoJ4hJiOx0GU64NBxeAWeoExRSVRwkBevQys7ykR16CkqKgY08IYT7M__aELOhTgTDbzyOPkp_XNvLgCEk82abn_Ia_2imlAoainrBlToYD2-jZ-RL-JS1hTCPR1mzWuCXmg-U3YNYTsy1DVqs--WyAXtQZfVYbgR2ghWrhmXFG7g0fyYWvSKSSZHxdWRgEV0E5tprNB-n_bxxxAd71LgxE3a_zqEIth6MtbD2lfTNoYMYLJNuE0S6ET_EaTDuY3MJIGUvkIEPPu1JJ7eCkuyh_18sX0YxF0o962InZajvvepfsK8G72fiRhmVQUh1c2KT5T8F1uYtXFRoyKIHk4961aSMEEOO4khXrMoBLCuJXBMeJG1ywUHuiQAAAAKhnSDW79mBuA3Q4LQV4Qp4auI8IKlCGIY3JMsWgPyKE7Rk9ZZtWjvsGcIfBIwp-zEypwxOBqW9ofSkV4mLhOWk;XSRF-TOKEN=3sZfNA9DZ0gaqNSrU8KLUgAqfoq_aO9afItoOH7ER_gO18CZ-eswr6VIs_ukUhP-zzSizwrOepLzUEtQrl0GQQ2;__cf_bm=4mVNoxHEGdUYFFM3A6qxbkOEF9p30CPYQt6BoHd5.hA-1728370701-1.0.1.1-mb__2W6TV4JvYfbRTT_qth1is.Fi4l0ztdLyuoUR6edKwVOECISAmAh_L.aUsY0prCHl0.XsJ0icCBlQGQ2ZRg"
+					}
+				},
+				"folder": {
+					"name": "01 Dev"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_initialPipeline_DCTOOL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Initial pipeline to get raw",
+				"activities": [
+					{
+						"name": "cpy_DC_Tool",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Number",
+											"type": "Int16",
+											"physicalType": "smallint"
+										},
+										"sink": {
+											"name": "Number",
+											"type": "Int16",
+											"physicalType": "smallint"
+										}
+									},
+									{
+										"source": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Employee_Nr",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Employee_Nr",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Locality_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Locality_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "NAMES",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "NAMES",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EL",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "EL",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "SURNAME",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "SURNAME",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ID_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "ID_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Job_Description",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Job_Description",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Daily_Wage_rate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Daily_Wage_rate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "COUNTRY_OF_ORIGIN",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "COUNTRY_OF_ORIGIN",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "DATE_OF_BIRTH",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "DATE_OF_BIRTH",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "GENDER",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "GENDER",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "AGE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "AGE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "RACE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "RACE",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "DISABILITY",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "DISABILITY",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Government_Grant",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Government_Grant",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Start_Date",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Start_Date",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Date_Exited_project",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Date_Exited_project",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Employed_in_past_5_years",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Employed_in_past_5_years",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "First_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "First_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Other_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Other_language_2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Other_language_3",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Other_language_3",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "School_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "School_name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Highest_level_of_education",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Highest_level_of_education",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Year_Completed",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Year_Completed",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Province2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Province2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Metro_District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Metro_District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Local_Municipality2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Local_Municipality2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Subplace_local_town_Village_Suburb",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Subplace_local_town_Village_Suburb",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Ward_name_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Ward_name_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Cellphone_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Cellphone_number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Email_address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Email_address",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Number_of_people_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Number_of_people_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Number_of_dependents_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Number_of_dependents_in_household",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Number_of_children_attending_school",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Number_of_children_attending_school",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Certified_ID_copy_submitted",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Certified_ID_copy_submitted",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tbl_src_DC_Tool",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tbl_DC_Tool",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cpy_BaseRegistration",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "cpy_DC_Tool",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Province",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "District_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Local_Municipality",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Project_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Project_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Project_Registration_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Project_Registration_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tbl_src_BaseRegistration",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tbl_BaseRegistration",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cpy_Rates",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "cpy_BaseRegistration",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Job_Title",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Job_Title",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "column2",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "column2",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										}
+									},
+									{
+										"source": {
+											"name": "Rate_per_hour",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "Rate_per_hour",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "tbl_src_Rates",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tbl_Rates",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "02 Excel"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_testGetEntity')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "web_getEntity_ID",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Cookie": {
+									"value": "@pipeline().parameters.parCookie",
+									"type": "Expression"
+								}
+							},
+							"url": {
+								"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "cpy_getEntity_ID",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "web_getEntity_ID",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "POST",
+									"additionalHeaders": {
+										"value": "\"name\":\"Cookie\",\n\"value\":\"PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAABDEVARA-nvLUaz0oASDmr0o-2vDMP5jQqzfe65EY7IWQAAAAAOgAAAAAIAACAAAAAObggeeCLCDbPLzjHDVnnbnty-z2BQQAo1dIog45XG8MABAAA3EDjmdkcLD5D04XH88evXCo6OElu-qWID_s3bzPX52ia3MgX8eatVnnVzYIDqbbYArlkbUc8uOp9vmGkkXAFlLJrp3-xagVb3DhEv7gghm7T1UDGSZmw2MuYF-nPjtQ7wNNI5xKtWoLJubGd_aurJKe6XZ7G-rAeUROVas_kXE4imgoE05IQRpvRiOK2RMCwVyyvCiNtBLKjEFwhiLDX21OV2qDewsrcGJjXp5C_HGzO29Fi8qAQqHZAI7cAUxvqy5OBJAvn8-DABfPbEAj2CKpA0jpNo0voEPaUBDMP7E1xl_Nd-0WEhabtDzZlv-DCB7BFOMYl0QOYhHjWmZY-y-Ei9AAHp9ye6hP7vPuNF6jlxS6WfIf1hkZPM4CQG9bsN9unhdPj5mfiyQ7_Q1TFCj5akQ-MXRwVvMq25Wp3I2mlucC5MgLSyOQqBZOL7E99adUb9H74BfJO4NMu93WoZLWZZROZjSB-GkaGZF0xPbBASE5vdOSjd8DIWqDDE2Qs9_C1fwhaTZbuY2cnnO9UBMRi-U2oKT8H9PpvKxhF6fyPDNuqpTKdbxmMnc4bYMIMicgzBDnRkI1oEe9rvJPDnQAAAACc9ZwoaQwR7BpNPU3g2IsBaBTzSjpmNwWLUoydvOd5DDB-Q7TGr8O-T_dpRca9D95cVwLPtqeaBEcYgK9w9cNk;XSRF-TOKEN=IOTITaKjM5v3cVaP2xZ4z12Cy7g3oEe_lj6id_mXG6j0qePBcK1Tq7HjZ3fm3j6xlNyjAqlJYwN8H2-bPYF0zQ2;__cf_bm=RQhlrhNA_fqHk6AaQhx8M4bn1Pcw2Ma.ECbVqeGyuL0-1728543495-1.0.1.1-kIAEcbK1WC7ecOGtE2A7TcL0YLCoEplNJaKXjwtnKeIxAQUgxvuC8E2ZptzON6MzturKwdhXpJZeFEFzDB_HUQ\"",
+										"type": "Expression"
+									},
+									"requestBody": {
+										"value": "{\"IDNumber\":\"8012138012080\"}",
+										"type": "Expression"
+									},
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								},
+								"Headers": {
+									"Cookie": {
+										"value": "@pipeline().parameters.parCookie",
+										"type": "Expression"
+									}
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "2cpy_getEntity_ID",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "web_getEntity_ID",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"body": {
+										"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+										"type": "Expression"
+									},
+									"requestMethod": "POST",
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								},
+								"Headers": {
+									"Cookie": {
+										"value": "@pipeline().parameters.parCookie",
+										"type": "Expression"
+									}
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"parCookie": {
+						"type": "string",
+						"defaultValue": "PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAABDEVARA-nvLUaz0oASDmr0o-2vDMP5jQqzfe65EY7IWQAAAAAOgAAAAAIAACAAAAAObggeeCLCDbPLzjHDVnnbnty-z2BQQAo1dIog45XG8MABAAA3EDjmdkcLD5D04XH88evXCo6OElu-qWID_s3bzPX52ia3MgX8eatVnnVzYIDqbbYArlkbUc8uOp9vmGkkXAFlLJrp3-xagVb3DhEv7gghm7T1UDGSZmw2MuYF-nPjtQ7wNNI5xKtWoLJubGd_aurJKe6XZ7G-rAeUROVas_kXE4imgoE05IQRpvRiOK2RMCwVyyvCiNtBLKjEFwhiLDX21OV2qDewsrcGJjXp5C_HGzO29Fi8qAQqHZAI7cAUxvqy5OBJAvn8-DABfPbEAj2CKpA0jpNo0voEPaUBDMP7E1xl_Nd-0WEhabtDzZlv-DCB7BFOMYl0QOYhHjWmZY-y-Ei9AAHp9ye6hP7vPuNF6jlxS6WfIf1hkZPM4CQG9bsN9unhdPj5mfiyQ7_Q1TFCj5akQ-MXRwVvMq25Wp3I2mlucC5MgLSyOQqBZOL7E99adUb9H74BfJO4NMu93WoZLWZZROZjSB-GkaGZF0xPbBASE5vdOSjd8DIWqDDE2Qs9_C1fwhaTZbuY2cnnO9UBMRi-U2oKT8H9PpvKxhF6fyPDNuqpTKdbxmMnc4bYMIMicgzBDnRkI1oEe9rvJPDnQAAAACc9ZwoaQwR7BpNPU3g2IsBaBTzSjpmNwWLUoydvOd5DDB-Q7TGr8O-T_dpRca9D95cVwLPtqeaBEcYgK9w9cNk;XSRF-TOKEN=IOTITaKjM5v3cVaP2xZ4z12Cy7g3oEe_lj6id_mXG6j0qePBcK1Tq7HjZ3fm3j6xlNyjAqlJYwN8H2-bPYF0zQ2;__cf_bm=RQhlrhNA_fqHk6AaQhx8M4bn1Pcw2Ma.ECbVqeGyuL0-1728543495-1.0.1.1-kIAEcbK1WC7ecOGtE2A7TcL0YLCoEplNJaKXjwtnKeIxAQUgxvuC8E2ZptzON6MzturKwdhXpJZeFEFzDB_HUQ"
+					}
+				},
+				"folder": {
+					"name": "01 Dev"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_stage_EmployBasic')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Exec Get Cookie",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pplnSage300_Cookie",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Exec Process EmployeeBasic",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Set Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ppln_Initial_Sage_Get_EmployeeBasic",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"parCookie": {
+									"value": "@variables('varCookie')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Set Cookie",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Exec Get Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "varCookie",
+							"value": {
+								"value": "@activity('Exec Get Cookie').output.pipelineReturnValue.retCookie",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"varCookie": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "01 Dev"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ppln_Initial_Sage_Get_EmployeeBasic')]"
+			]
+		}
+	]
+}

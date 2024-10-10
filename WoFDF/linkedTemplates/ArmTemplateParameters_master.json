@@ -11,6 +11,9 @@
 		"WOF_DataWareHouse_password": {
 			"value": ""
 		},
+		"SageRestGetEntity_properties_typeProperties_url": {
+			"value": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+		},
 		"SageRestToken_properties_typeProperties_url": {
 			"value": "https://online.sage.co.za/U62537/token"
 		},
@@ -31,6 +34,12 @@
 		},
 		"WOF_DataWareHouse_properties_typeProperties_userName": {
 			"value": "Inumeri_ETL"
+		},
+		"LSSage300_properties_typeProperties_url": {
+			"value": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+		},
+		"HttpServer1_properties_typeProperties_url": {
+			"value": "https://online.sage.co.za/U62537/api/apibase/entity/get"
 		},
 		"containerUri": {
 			"value": ""

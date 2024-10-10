@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'WOF_DataWareHouse'"
 		},
+		"SageRestGetEntity_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+		},
 		"SageRestToken_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://online.sage.co.za/U62537/token"
@@ -42,6 +46,14 @@
 		"WOF_DataWareHouse_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Inumeri_ETL"
+		},
+		"LSSage300_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+		},
+		"HttpServer1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/api/apibase/entity/get"
 		},
 		"containerUri": {
 			"type": "string",
@@ -76,6 +88,12 @@
 					"WOF_DataWareHouse_password": {
 						"value": "[parameters('WOF_DataWareHouse_password')]"
 					},
+					"LSSage300_properties_typeProperties_url": {
+						"value": "[parameters('LSSage300_properties_typeProperties_url')]"
+					},
+					"SageRestGetEntity_properties_typeProperties_url": {
+						"value": "[parameters('SageRestGetEntity_properties_typeProperties_url')]"
+					},
 					"SageRestToken_properties_typeProperties_url": {
 						"value": "[parameters('SageRestToken_properties_typeProperties_url')]"
 					},
@@ -96,10 +114,33 @@
 					},
 					"WOF_DataWareHouse_properties_typeProperties_userName": {
 						"value": "[parameters('WOF_DataWareHouse_properties_typeProperties_userName')]"
+					},
+					"HttpServer1_properties_typeProperties_url": {
+						"value": "[parameters('HttpServer1_properties_typeProperties_url')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "WoFDF_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'WoFDF_ArmTemplate_0')]"
+			]
 		}
 	]
 }

@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'WOF_DataWareHouse'"
 		},
+		"SageRestGetEntity_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+		},
 		"SageRestToken_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://online.sage.co.za/U62537/token"
@@ -42,6 +46,14 @@
 		"WOF_DataWareHouse_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Inumeri_ETL"
+		},
+		"LSSage300_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+		},
+		"HttpServer1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://online.sage.co.za/U62537/api/apibase/entity/get"
 		}
 	},
 	"variables": {
@@ -77,44 +89,6 @@
 							},
 							"body": {
 								"value": "grant_type=password&scope=apiKey%3D4167ad79-29de-4e28-85ed-0f1cd4026dfa",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "getTables",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "Set Sage Cookie",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"method": "POST",
-							"headers": {
-								"Cookie": {
-									"value": "@variables('varSageCookie')",
-									"type": "Expression"
-								}
-							},
-							"url": "https://online.sage.co.za/U62537/api/apibase/Employee/Get/1",
-							"connectVia": {
-								"referenceName": "AutoResolveIntegrationRuntime",
-								"type": "IntegrationRuntimeReference"
-							},
-							"body": {
-								"value": "{\n  \"CompanyCode\": \"SOUTHAFRICA\",\n  \"CompanyRuleCode\": \"RSA\",\n  \"IDNumber\": \"8012138012080\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -253,8 +227,8 @@
 						}
 					},
 					{
-						"name": "getEntity",
-						"type": "WebActivity",
+						"name": "Set PipelineReturn",
+						"type": "SetVariable",
 						"dependsOn": [
 							{
 								"activity": "Set Sage Cookie",
@@ -264,30 +238,22 @@
 							}
 						],
 						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
 							"secureInput": false
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"method": "POST",
-							"headers": {
-								"Cookie": {
-									"value": "@variables('varSageCookie')",
-									"type": "Expression"
+							"variableName": "pipelineReturnValue",
+							"value": [
+								{
+									"key": "retCookie",
+									"value": {
+										"type": "Expression",
+										"content": "@variables('varSageCookie')"
+									}
 								}
-							},
-							"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
-							"connectVia": {
-								"referenceName": "AutoResolveIntegrationRuntime",
-								"type": "IntegrationRuntimeReference"
-							},
-							"body": {
-								"value": "{\n    //\"EntityCode\" : \"API016\"\n    \"GenEntityTypeCode\" : \"INDV\",\n    \"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    //\"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
-								"type": "Expression"
-							}
+							],
+							"setSystemVariable": true
 						}
 					}
 				],
@@ -333,9 +299,16 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "getTables",
+						"name": "getEmployee",
 						"type": "WebActivity",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "ForEachEmployeeID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -362,6 +335,246 @@
 								"type": "Expression"
 							}
 						}
+					},
+					{
+						"name": "ForEachEmployeeID",
+						"type": "ForEach",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "LookupIDS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LookupIDS').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "getEntity_ID",
+									"type": "WebActivity",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "POST",
+										"headers": {
+											"Cookie": {
+												"value": "@pipeline().parameters.parCookie",
+												"type": "Expression"
+											}
+										},
+										"url": {
+											"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+											"type": "Expression"
+										},
+										"connectVia": {
+											"referenceName": "AutoResolveIntegrationRuntime",
+											"type": "IntegrationRuntimeReference"
+										},
+										"body": {
+											"value": "@concat('{\"IDNumber\" : \"',item()['ID Number'],'\"}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
+									"dependsOn": [
+										{
+											"activity": "getEntity_ID",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "POST",
+											"requestBody": {
+												"value": "@concat('{\"IDNumber\" : \"9106126400080\"}')",
+												"type": "Expression"
+											},
+											"additionalHeaders": {
+												"Cookie": {
+													"value": "@pipeline().parameters.parCookie",
+													"type": "Expression"
+												}
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "SageRestEmployee",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "tb_DIM_ParticipantBasicDetails",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "LookupIDS",
+						"type": "Lookup",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select top 2 [ID Number] from tb_DIM_ParticipantBasicDetails;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Copy data2",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "getEntity_ID_copy1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "POST",
+								"requestBody": "{\n    //\"EntityCode\" : \"API016\"\n    //\"GenEntityTypeCode\" : \"INDV\",\n    //\"gender\": \"F\"\n    //\"GenEntitySubTypeCode\" : \"REC\",\n    \"IDNumber\" : \"8010040877087\"\n    //\"PassportNo\" : \"PS234\"\n    //\"EntityId\" : \"1206\"\n}",
+								"additionalHeaders": {
+									"Cookie": {
+										"value": "@pipeline().parameters.parCookie",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "SageRestEmployee",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "getEntity_ID_copy1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Cookie": {
+									"value": "@pipeline().parameters.parCookie",
+									"type": "Expression"
+								}
+							},
+							"url": {
+								"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
@@ -369,7 +582,8 @@
 				},
 				"parameters": {
 					"parCookie": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAACxmCavOJoh9ij-GgrQ7w1easEBCJtkJnuPlyDpbrXWPwAAAAAOgAAAAAIAACAAAAAvyJQ_lK0ekt6IsHw-_66N63t3AwyR2R3d9XNyqdm8osABAADsWihjgcAsFFNqrYFI4uvMrhBAAHukM2cgzgldiveOK65dDZ-fJh64lMdJYZJqlLMRrLW1UhzsRz1xzveQ2XsSwhzB_9tU5LQ9uSY4MAmHnTdHIat7pW1GWkKg_ohE4twfWpPNUvmNSypCnyqnEkruU8QVR3UxZHo_RGHaoeYTDkn8GqsjW4dNZgTzHXSF5dxddCzZePso8uu9QjFlqw9KJKeavGJ4YvoJ4hJiOx0GU64NBxeAWeoExRSVRwkBevQys7ykR16CkqKgY08IYT7M__aELOhTgTDbzyOPkp_XNvLgCEk82abn_Ia_2imlAoainrBlToYD2-jZ-RL-JS1hTCPR1mzWuCXmg-U3YNYTsy1DVqs--WyAXtQZfVYbgR2ghWrhmXFG7g0fyYWvSKSSZHxdWRgEV0E5tprNB-n_bxxxAd71LgxE3a_zqEIth6MtbD2lfTNoYMYLJNuE0S6ET_EaTDuY3MJIGUvkIEPPu1JJ7eCkuyh_18sX0YxF0o962InZajvvepfsK8G72fiRhmVQUh1c2KT5T8F1uYtXFRoyKIHk4961aSMEEOO4khXrMoBLCuJXBMeJG1ywUHuiQAAAAKhnSDW79mBuA3Q4LQV4Qp4auI8IKlCGIY3JMsWgPyKE7Rk9ZZtWjvsGcIfBIwp-zEypwxOBqW9ofSkV4mLhOWk;XSRF-TOKEN=3sZfNA9DZ0gaqNSrU8KLUgAqfoq_aO9afItoOH7ER_gO18CZ-eswr6VIs_ukUhP-zzSizwrOepLzUEtQrl0GQQ2;__cf_bm=4mVNoxHEGdUYFFM3A6qxbkOEF9p30CPYQt6BoHd5.hA-1728370701-1.0.1.1-mb__2W6TV4JvYfbRTT_qth1is.Fi4l0ztdLyuoUR6edKwVOECISAmAh_L.aUsY0prCHl0.XsJ0icCBlQGQ2ZRg"
 					}
 				},
 				"folder": {
@@ -378,7 +592,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('factoryId'), '/datasets/tb_DIM_ParticipantBasicDetails')]",
+				"[concat(variables('factoryId'), '/datasets/SageRestEmployee')]"
 			]
 		},
 		{
@@ -466,7 +682,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "01 Dev"
+					"name": "02 Excel"
 				},
 				"annotations": []
 			},
@@ -1214,7 +1430,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "01 Dev"
+					"name": "02 Excel"
 				},
 				"annotations": []
 			},
@@ -1228,12 +1444,107 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SageEmployee')]",
+			"name": "[concat(parameters('factoryName'), '/ppln_stage_EmployBasic')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Exec Get Cookie",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pplnSage300_Cookie",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Exec Process EmployeeBasic",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Set Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ppln_Initial_Sage_Get_EmployeeBasic",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"parCookie": {
+									"value": "@variables('varCookie')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Set Cookie",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Exec Get Cookie",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "varCookie",
+							"value": {
+								"value": "@activity('Exec Get Cookie').output.pipelineReturnValue.retCookie",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"varCookie": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "01 Dev"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pplnSage300_Cookie')]",
+				"[concat(variables('factoryId'), '/pipelines/ppln_Initial_Sage_Get_EmployeeBasic')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SageRestEmployee')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "SageRestToken",
+					"referenceName": "SageRestGetEntity",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
@@ -1242,12 +1553,103 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "https://online.sage.co.za/U62537/api/apibase/entity/get"
+					"relativeUrl": ""
 				},
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SageRestToken')]"
+				"[concat(variables('factoryId'), '/linkedServices/SageRestGetEntity')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tb_DIM_ParticipantBasicDetails')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "WOF_DataWareHouse",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "02 Target"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ParticipantBasicDetails_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "NAMES",
+						"type": "varchar"
+					},
+					{
+						"name": "EL",
+						"type": "varchar"
+					},
+					{
+						"name": "SURNAME",
+						"type": "varchar"
+					},
+					{
+						"name": "ID Number",
+						"type": "varchar"
+					},
+					{
+						"name": "Job Description",
+						"type": "varchar"
+					},
+					{
+						"name": "Daily Wage rate",
+						"type": "varchar"
+					},
+					{
+						"name": "COUNTRY OF ORIGIN",
+						"type": "varchar"
+					},
+					{
+						"name": "DATE OF BIRTH",
+						"type": "varchar"
+					},
+					{
+						"name": "GENDER",
+						"type": "varchar"
+					},
+					{
+						"name": "AGE",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "RACE",
+						"type": "varchar"
+					},
+					{
+						"name": "DISABILITY",
+						"type": "varchar"
+					},
+					{
+						"name": "Government Grant",
+						"type": "varchar"
+					},
+					{
+						"name": "Start Date",
+						"type": "date"
+					},
+					{
+						"name": "Date Exited project",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tb_DIM_ParticipantBasicDetails"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/WOF_DataWareHouse')]"
 			]
 		},
 		{
@@ -1931,6 +2333,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SageRestGetEntity')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('SageRestGetEntity_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "None"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SageRestToken')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2040,64 +2463,256 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ppln_stage_EmployBasic')]",
+			"name": "[concat(parameters('factoryName'), '/irSage300')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "Self hosted Sage300 integration runtime",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LSSage300')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Web",
+				"typeProperties": {
+					"url": "[parameters('LSSage300_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "irSage300",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/irSage300')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HttpServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('HttpServer1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "HttpServer1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/HttpServer1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ppln_testGetEntity')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Exec Get Cookie",
-						"type": "ExecutePipeline",
+						"name": "web_getEntity_ID",
+						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
 							"secureInput": false
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"pipeline": {
-								"referenceName": "pplnSage300_Cookie",
-								"type": "PipelineReference"
+							"method": "POST",
+							"headers": {
+								"Cookie": {
+									"value": "@pipeline().parameters.parCookie",
+									"type": "Expression"
+								}
 							},
-							"waitOnCompletion": true,
-							"parameters": {}
+							"url": {
+								"value": "@string('https://online.sage.co.za/U62537/api/apibase/entity/get')",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+								"type": "Expression"
+							}
 						}
 					},
 					{
-						"name": "Exec Process EmployeeBasic",
-						"type": "ExecutePipeline",
+						"name": "cpy_getEntity_ID",
+						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "Exec Get Cookie",
+								"activity": "web_getEntity_ID",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
 						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
 							"secureInput": false
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ppln_Initial_Sage_Get_EmployeeBasic",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"parCookie": {
-									"value": "@variables('varCookie')",
-									"type": "Expression"
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "POST",
+									"additionalHeaders": {
+										"value": "\"name\":\"Cookie\",\n\"value\":\"PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAABDEVARA-nvLUaz0oASDmr0o-2vDMP5jQqzfe65EY7IWQAAAAAOgAAAAAIAACAAAAAObggeeCLCDbPLzjHDVnnbnty-z2BQQAo1dIog45XG8MABAAA3EDjmdkcLD5D04XH88evXCo6OElu-qWID_s3bzPX52ia3MgX8eatVnnVzYIDqbbYArlkbUc8uOp9vmGkkXAFlLJrp3-xagVb3DhEv7gghm7T1UDGSZmw2MuYF-nPjtQ7wNNI5xKtWoLJubGd_aurJKe6XZ7G-rAeUROVas_kXE4imgoE05IQRpvRiOK2RMCwVyyvCiNtBLKjEFwhiLDX21OV2qDewsrcGJjXp5C_HGzO29Fi8qAQqHZAI7cAUxvqy5OBJAvn8-DABfPbEAj2CKpA0jpNo0voEPaUBDMP7E1xl_Nd-0WEhabtDzZlv-DCB7BFOMYl0QOYhHjWmZY-y-Ei9AAHp9ye6hP7vPuNF6jlxS6WfIf1hkZPM4CQG9bsN9unhdPj5mfiyQ7_Q1TFCj5akQ-MXRwVvMq25Wp3I2mlucC5MgLSyOQqBZOL7E99adUb9H74BfJO4NMu93WoZLWZZROZjSB-GkaGZF0xPbBASE5vdOSjd8DIWqDDE2Qs9_C1fwhaTZbuY2cnnO9UBMRi-U2oKT8H9PpvKxhF6fyPDNuqpTKdbxmMnc4bYMIMicgzBDnRkI1oEe9rvJPDnQAAAACc9ZwoaQwR7BpNPU3g2IsBaBTzSjpmNwWLUoydvOd5DDB-Q7TGr8O-T_dpRca9D95cVwLPtqeaBEcYgK9w9cNk;XSRF-TOKEN=IOTITaKjM5v3cVaP2xZ4z12Cy7g3oEe_lj6id_mXG6j0qePBcK1Tq7HjZ3fm3j6xlNyjAqlJYwN8H2-bPYF0zQ2;__cf_bm=RQhlrhNA_fqHk6AaQhx8M4bn1Pcw2Ma.ECbVqeGyuL0-1728543495-1.0.1.1-kIAEcbK1WC7ecOGtE2A7TcL0YLCoEplNJaKXjwtnKeIxAQUgxvuC8E2ZptzON6MzturKwdhXpJZeFEFzDB_HUQ\"",
+										"type": "Expression"
+									},
+									"requestBody": {
+										"value": "{\"IDNumber\":\"8012138012080\"}",
+										"type": "Expression"
+									},
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								},
+								"Headers": {
+									"Cookie": {
+										"value": "@pipeline().parameters.parCookie",
+										"type": "Expression"
+									}
 								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference",
+								"parameters": {}
 							}
-						}
+						],
+						"outputs": [
+							{
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "2cpy_getEntity_ID",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "web_getEntity_ID",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"body": {
+										"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+										"type": "Expression"
+									},
+									"requestMethod": "POST",
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								},
+								"Headers": {
+									"Cookie": {
+										"value": "@pipeline().parameters.parCookie",
+										"type": "Expression"
+									}
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tb_DIM_ParticipantBasicDetails",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"variables": {
-					"varCookie": {
-						"type": "String"
+				"parameters": {
+					"parCookie": {
+						"type": "string",
+						"defaultValue": "PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAABDEVARA-nvLUaz0oASDmr0o-2vDMP5jQqzfe65EY7IWQAAAAAOgAAAAAIAACAAAAAObggeeCLCDbPLzjHDVnnbnty-z2BQQAo1dIog45XG8MABAAA3EDjmdkcLD5D04XH88evXCo6OElu-qWID_s3bzPX52ia3MgX8eatVnnVzYIDqbbYArlkbUc8uOp9vmGkkXAFlLJrp3-xagVb3DhEv7gghm7T1UDGSZmw2MuYF-nPjtQ7wNNI5xKtWoLJubGd_aurJKe6XZ7G-rAeUROVas_kXE4imgoE05IQRpvRiOK2RMCwVyyvCiNtBLKjEFwhiLDX21OV2qDewsrcGJjXp5C_HGzO29Fi8qAQqHZAI7cAUxvqy5OBJAvn8-DABfPbEAj2CKpA0jpNo0voEPaUBDMP7E1xl_Nd-0WEhabtDzZlv-DCB7BFOMYl0QOYhHjWmZY-y-Ei9AAHp9ye6hP7vPuNF6jlxS6WfIf1hkZPM4CQG9bsN9unhdPj5mfiyQ7_Q1TFCj5akQ-MXRwVvMq25Wp3I2mlucC5MgLSyOQqBZOL7E99adUb9H74BfJO4NMu93WoZLWZZROZjSB-GkaGZF0xPbBASE5vdOSjd8DIWqDDE2Qs9_C1fwhaTZbuY2cnnO9UBMRi-U2oKT8H9PpvKxhF6fyPDNuqpTKdbxmMnc4bYMIMicgzBDnRkI1oEe9rvJPDnQAAAACc9ZwoaQwR7BpNPU3g2IsBaBTzSjpmNwWLUoydvOd5DDB-Q7TGr8O-T_dpRca9D95cVwLPtqeaBEcYgK9w9cNk;XSRF-TOKEN=IOTITaKjM5v3cVaP2xZ4z12Cy7g3oEe_lj6id_mXG6j0qePBcK1Tq7HjZ3fm3j6xlNyjAqlJYwN8H2-bPYF0zQ2;__cf_bm=RQhlrhNA_fqHk6AaQhx8M4bn1Pcw2Ma.ECbVqeGyuL0-1728543495-1.0.1.1-kIAEcbK1WC7ecOGtE2A7TcL0YLCoEplNJaKXjwtnKeIxAQUgxvuC8E2ZptzON6MzturKwdhXpJZeFEFzDB_HUQ"
 					}
 				},
 				"folder": {
@@ -2106,8 +2721,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pplnSage300_Cookie')]",
-				"[concat(variables('factoryId'), '/pipelines/ppln_Initial_Sage_Get_EmployeeBasic')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('factoryId'), '/datasets/Json1')]",
+				"[concat(variables('factoryId'), '/datasets/tb_DIM_ParticipantBasicDetails')]"
 			]
 		}
 	]
