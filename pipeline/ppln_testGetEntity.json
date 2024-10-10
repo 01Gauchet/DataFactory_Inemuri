@@ -161,6 +161,40 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "POST",
+						"additionalHeaders": {
+							"Cookie": "PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAACW2KtxeIMRyW8DpsI4SLK8GmUrQbjo9k4XaMzzriGgGAAAAAAOgAAAAAIAACAAAABGxWrg8-ZHZcHqxIPAz-ayOvjIBl0LGJqKIH06xXEGNcABAAB_GKYKvB3230wL63g7m2mCHU0hzbjccgqBDh5dxBBuKXHYEcsSZa05mdm6ByfdRFsUY559QmpKckDaPm2mORDZBuWQ7vuHZDKDIMdEIL37nZD3AdhD2jcGCjH3_DT2r1HAFQ2tMlvDVePfWjVLvM9tOpa6ERAx2aRWrfdUtEAsMvR6Ifdasynb9T6uKS6reLkgvZkR7dYCwRquzCM9OZXXGID-CQdnZCf7SBwvBYOHgqGk1eBSEBV6Izk-7LtI6QV2RKka6NgGR6QJ0hJEY4Fogni3lnSGbWEzLsQTr9oJSzwNYjewO_Rf7oMfMDitL1trgi5Fg7Gthk94dtW-IDjkjwTPgy_SAkX-luedrIoQdrQW4oCp4h4M2aZpJyvywJ2J8Si5WorcdVtrSM_dFOeD2s6YtAGZ2qK1cZ3Sqn8rkKYUdXL50cgdyZY_1W46EjGf_UNa0v23hPT5TyGQMxjkj6ZStcqYMOEKqF74Qkskxz8GwrFEc8kI1TwasgzQRb5zE7EfKk7ehD9FV7bl-z7qVHmvzLGg253VDVkzQ0JOWypx1giBZPb3yWnJ_CQsoUqYZBbveLndwHoSBzFPKd3GQAAAAKBS90WzLVcD7c4lio5OL3YgK3xBRN8NoIY-EQfnquxBbla2GqFasq5t3n4-J6GzrQOUcWl2sgnfD3IiYgwbj2M;XSRF-TOKEN=LDkKzhUmfJ1Zp9hCIYyg2AcqRIJlqaJ5VyAIma_kFWIZRo9qzIANa_-ToAynOoXhZYQbiNVzvKatY62dG7rpMQ2;__cf_bm=daKrVpK5WkAfb4yiHf1_6oYSTd.MOBEa5Mgvje8RNmw-1728547773-1.0.1.1-IpPCHfHWT74.BF7AmkvbW.9_ccGN0U9GeZsYUbqW3FCkCAWIynjVzENPfb4d4GT7PuzxmFcSpTwjhj.A6KHoIg"
+						},
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestResource1",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"parameters": {
