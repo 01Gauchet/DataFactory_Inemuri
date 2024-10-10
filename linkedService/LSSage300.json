@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "Web",
 		"typeProperties": {
-			"url": "sss",
+			"url": "https://online.sage.co.za/U62537/api/apibase/entity/get",
 			"authenticationType": "Anonymous"
 		},
 		"connectVia": {
