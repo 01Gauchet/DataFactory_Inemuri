@@ -130,6 +130,10 @@
 								"type": "Expression"
 							},
 							"requestMethod": "POST",
+							"additionalHeaders": {
+								"value": "{\"Content-Length\": \"110\"}",
+								"type": "Expression"
+							},
 							"requestTimeout": ""
 						},
 						"formatSettings": {
