@@ -1,12 +1,19 @@
 {
 	"name": "HttpServer1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "HttpServer",
 		"typeProperties": {
 			"url": "https://online.sage.co.za/U62537/api/apibase/entity/get/",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "Anonymous"
+			"authenticationType": "Anonymous",
+			"authHeaders": {
+				"Authorization": {
+					"type": "SecureString",
+					"value": "**********"
+				}
+			}
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
