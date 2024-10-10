@@ -39,6 +39,8 @@
 			{
 				"name": "cpy_getEntity_IDjson",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
@@ -104,6 +106,8 @@
 			{
 				"name": "2cpy_getEntity_IDjson",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
@@ -165,7 +169,14 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "web_getEntity_ID",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
