@@ -39,8 +39,6 @@
 			{
 				"name": "cpy_getEntity_IDjson",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
@@ -106,8 +104,6 @@
 			{
 				"name": "2cpy_getEntity_IDjson",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
