@@ -6,6 +6,10 @@
 		"typeProperties": {
 			"url": "sss",
 			"authenticationType": "Anonymous"
+		},
+		"connectVia": {
+			"referenceName": "irSage300",
+			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
