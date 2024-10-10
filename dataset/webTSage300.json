@@ -7,6 +7,12 @@
 		},
 		"annotations": [],
 		"type": "WebTable",
-		"schema": []
+		"schema": [],
+		"typeProperties": {
+			"index": {
+				"value": "1",
+				"type": "Expression"
+			}
+		}
 	}
 }
