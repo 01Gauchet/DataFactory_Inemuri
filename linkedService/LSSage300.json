@@ -8,5 +8,6 @@
 		},
 		"annotations": []
 	},
-	"method": "POST"
+	"method": "POST",
+	"url": "https://online.sage.co.za/U62537/api/apibase/entity/get"
 }
