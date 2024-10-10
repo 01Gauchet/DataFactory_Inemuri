@@ -9,7 +9,7 @@
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous",
 			"authHeaders": {
-				"Authorization": {
+				"Cookie": {
 					"type": "SecureString",
 					"value": "**********"
 				}
