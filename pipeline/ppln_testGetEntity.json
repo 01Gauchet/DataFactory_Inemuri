@@ -100,6 +100,71 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "2cpy_getEntity_ID",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "web_getEntity_ID",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "POST",
+							"additionalHeaders": {
+								"value": "\"name\":\"Cookie\",\n\"value\":\"PeopleEssUser=AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlilLJUmpEkqk4HPnkadDqAAAAAACAAAAAAAQZgAAAAEAACAAAABDEVARA-nvLUaz0oASDmr0o-2vDMP5jQqzfe65EY7IWQAAAAAOgAAAAAIAACAAAAAObggeeCLCDbPLzjHDVnnbnty-z2BQQAo1dIog45XG8MABAAA3EDjmdkcLD5D04XH88evXCo6OElu-qWID_s3bzPX52ia3MgX8eatVnnVzYIDqbbYArlkbUc8uOp9vmGkkXAFlLJrp3-xagVb3DhEv7gghm7T1UDGSZmw2MuYF-nPjtQ7wNNI5xKtWoLJubGd_aurJKe6XZ7G-rAeUROVas_kXE4imgoE05IQRpvRiOK2RMCwVyyvCiNtBLKjEFwhiLDX21OV2qDewsrcGJjXp5C_HGzO29Fi8qAQqHZAI7cAUxvqy5OBJAvn8-DABfPbEAj2CKpA0jpNo0voEPaUBDMP7E1xl_Nd-0WEhabtDzZlv-DCB7BFOMYl0QOYhHjWmZY-y-Ei9AAHp9ye6hP7vPuNF6jlxS6WfIf1hkZPM4CQG9bsN9unhdPj5mfiyQ7_Q1TFCj5akQ-MXRwVvMq25Wp3I2mlucC5MgLSyOQqBZOL7E99adUb9H74BfJO4NMu93WoZLWZZROZjSB-GkaGZF0xPbBASE5vdOSjd8DIWqDDE2Qs9_C1fwhaTZbuY2cnnO9UBMRi-U2oKT8H9PpvKxhF6fyPDNuqpTKdbxmMnc4bYMIMicgzBDnRkI1oEe9rvJPDnQAAAACc9ZwoaQwR7BpNPU3g2IsBaBTzSjpmNwWLUoydvOd5DDB-Q7TGr8O-T_dpRca9D95cVwLPtqeaBEcYgK9w9cNk;XSRF-TOKEN=IOTITaKjM5v3cVaP2xZ4z12Cy7g3oEe_lj6id_mXG6j0qePBcK1Tq7HjZ3fm3j6xlNyjAqlJYwN8H2-bPYF0zQ2;__cf_bm=RQhlrhNA_fqHk6AaQhx8M4bn1Pcw2Ma.ECbVqeGyuL0-1728543495-1.0.1.1-kIAEcbK1WC7ecOGtE2A7TcL0YLCoEplNJaKXjwtnKeIxAQUgxvuC8E2ZptzON6MzturKwdhXpJZeFEFzDB_HUQ\"",
+								"type": "Expression"
+							},
+							"requestBody": {
+								"value": "{\"IDNumber\":\"8012138012080\"}",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						},
+						"Headers": {
+							"Cookie": {
+								"value": "@pipeline().parameters.parCookie",
+								"type": "Expression"
+							}
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tb_DIM_ParticipantBasicDetails",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"parameters": {
