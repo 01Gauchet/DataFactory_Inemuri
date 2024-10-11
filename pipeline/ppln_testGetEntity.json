@@ -134,6 +134,10 @@
 								"value": "{Cookie:\"Cookie\"}",
 								"type": "Expression"
 							},
+							"requestBody": {
+								"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+								"type": "Expression"
+							},
 							"requestTimeout": ""
 						},
 						"formatSettings": {
