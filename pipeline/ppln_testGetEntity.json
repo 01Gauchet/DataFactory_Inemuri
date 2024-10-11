@@ -162,8 +162,6 @@
 			{
 				"name": "copyRest",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
@@ -186,6 +184,12 @@
 						"httpRequestTimeout": "00:01:40",
 						"requestInterval": "00.00:00:00.010",
 						"requestMethod": "POST",
+						"additionalHeaders": {
+							"Cookie": {
+								"value": "@pipeline().parameters.parCookie",
+								"type": "Expression"
+							}
+						},
 						"paginationRules": {
 							"supportRFC5988": "true"
 						}
