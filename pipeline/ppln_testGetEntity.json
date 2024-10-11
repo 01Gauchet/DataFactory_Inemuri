@@ -61,10 +61,6 @@
 						"storeSettings": {
 							"type": "HttpReadSettings",
 							"requestMethod": "POST",
-							"additionalHeaders": {
-								"value": "@pipeline().parameters.parCookie",
-								"type": "Expression"
-							},
 							"requestBody": {
 								"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
 								"type": "Expression"
