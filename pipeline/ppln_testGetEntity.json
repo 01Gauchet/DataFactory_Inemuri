@@ -162,6 +162,8 @@
 			{
 				"name": "copyRest",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
