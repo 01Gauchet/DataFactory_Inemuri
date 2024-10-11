@@ -193,9 +193,6 @@
 								"value": "@pipeline().parameters.parCookie",
 								"type": "Expression"
 							}
-						},
-						"paginationRules": {
-							"supportRFC5988": "true"
 						}
 					},
 					"sink": {
