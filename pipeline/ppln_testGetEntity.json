@@ -126,7 +126,6 @@
 								"type": "Expression"
 							},
 							"requestMethod": "POST",
-							"requestBody": "{\"Content-Length\": \"110\"}",
 							"requestTimeout": ""
 						},
 						"formatSettings": {
@@ -205,6 +204,57 @@
 				"inputs": [
 					{
 						"referenceName": "RestResource1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tb_DIM_ParticipantBasicDetails",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "cpy_webtable",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "web_getEntity_ID",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "WebSource"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "WebTable1",
 						"type": "DatasetReference"
 					}
 				],
