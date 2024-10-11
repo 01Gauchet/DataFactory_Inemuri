@@ -62,7 +62,7 @@
 							"type": "HttpReadSettings",
 							"requestMethod": "POST",
 							"additionalHeaders": {
-								"value": "{\"Cookie\":\"Cookie1111\"}",
+								"value": "{\"Cookie\"=\"Cookie1111\"}",
 								"type": "Expression"
 							},
 							"requestBody": {
