@@ -126,6 +126,10 @@
 								"type": "Expression"
 							},
 							"requestMethod": "POST",
+							"additionalHeaders": {
+								"value": "{\"name\":\"Cookie\"}",
+								"type": "Expression"
+							},
 							"requestTimeout": ""
 						},
 						"formatSettings": {
