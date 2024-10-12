@@ -131,7 +131,7 @@
 							},
 							"requestMethod": "POST",
 							"additionalHeaders": {
-								"value": "{Cookie:\"Cookie\"}",
+								"value": "Accept:application/json",
 								"type": "Expression"
 							},
 							"requestBody": {
@@ -173,6 +173,8 @@
 			{
 				"name": "copyRest",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
