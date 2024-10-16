@@ -41,14 +41,7 @@
 				"type": "Copy",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [
-					{
-						"activity": "web_getEntity_ID",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -108,14 +101,7 @@
 				"type": "Copy",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [
-					{
-						"activity": "web_getEntity_ID",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -162,7 +148,8 @@
 				]
 			},
 			{
-				"name": "Stored procedure1",
+				"name": "genEntityID",
+				"description": "output.data[0].genEntityID",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
@@ -186,6 +173,42 @@
 						"myJson": {
 							"value": {
 								"value": "@activity('web_getEntity_ID').output.data[0].genEntityID",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "WOF_DataWareHouse",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "data0",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "web_getEntity_ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[myProc_JSON_in]",
+					"storedProcedureParameters": {
+						"myJson": {
+							"value": {
+								"value": "@activity('web_getEntity_ID').output.data[0]",
 								"type": "Expression"
 							},
 							"type": "String"
