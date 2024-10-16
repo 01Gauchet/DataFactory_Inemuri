@@ -168,7 +168,7 @@
 					{
 						"activity": "web_getEntity_ID",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					}
 				],
