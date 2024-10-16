@@ -39,6 +39,8 @@
 			{
 				"name": "cpy_getEntity_IDjson",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
@@ -104,6 +106,8 @@
 			{
 				"name": "copyRest",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "web_getEntity_ID",
@@ -156,6 +160,42 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Stored procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "web_getEntity_ID",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[myProc_JSON_in]",
+					"storedProcedureParameters": {
+						"myJson": {
+							"value": {
+								"value": "@activity('web_getEntity_ID').output.value",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "WOF_DataWareHouse",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"parameters": {
