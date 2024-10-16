@@ -185,7 +185,7 @@
 					"storedProcedureParameters": {
 						"myJson": {
 							"value": {
-								"value": "@activity('web_getEntity_ID').output.data[0]",
+								"value": "@activity('web_getEntity_ID').output",
 								"type": "Expression"
 							},
 							"type": "String"
