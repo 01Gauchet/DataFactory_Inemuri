@@ -58,7 +58,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"functionName": "SageEmpSQL/httpExecuteSageEmployeeAll",
+					"functionName": "https://sageempsql.azurewebsites.net/api/ExecuteSageEmployeeAllRoute?",
 					"body": {
 						"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
 						"type": "Expression"
