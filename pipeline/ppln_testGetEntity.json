@@ -63,7 +63,7 @@
 						"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
 						"type": "Expression"
 					},
-					"method": "GET"
+					"method": "HEAD"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureFunction1",
