@@ -58,7 +58,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"functionName": "httpExecuteSageEmployeeAll",
+					"functionName": "SageEmpSQL/httpExecuteSageEmployeeAll",
 					"body": {
 						"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
 						"type": "Expression"
