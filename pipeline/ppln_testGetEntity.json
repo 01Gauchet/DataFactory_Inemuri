@@ -57,7 +57,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"functionName": "httpExecuteSageEmployeeAll",
-					"body": "\"no\":\"value\"",
+					"body": {
+						"value": "@concat('{\"IDNumber\" : \"8010040877087\"}')",
+						"type": "Expression"
+					},
 					"method": "POST"
 				},
 				"linkedServiceName": {
