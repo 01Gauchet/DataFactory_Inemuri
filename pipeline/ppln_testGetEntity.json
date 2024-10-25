@@ -60,7 +60,7 @@
 				"typeProperties": {
 					"functionName": "https://sageempsql.azurewebsites.net/api/ExecuteSageEmployeeAllRoute?",
 					"body": "",
-					"method": "POST"
+					"method": "GET"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureFunction1",
