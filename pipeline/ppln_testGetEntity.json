@@ -58,7 +58,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"functionName": "https://sageempsql.azurewebsites.net/api/ExecuteSageEmployeeAllRoute?",
+					"functionName": {
+						"value": "@concat('https://sageempsql.azurewebsites.net/api/ExecuteSageEmployeeAllRoute')",
+						"type": "Expression"
+					},
 					"body": "",
 					"method": "GET"
 				},
